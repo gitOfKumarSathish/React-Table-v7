@@ -1,47 +1,15 @@
+import { memo } from 'react';
 import { useTable, useBlockLayout, useResizeColumns, useSortBy, useRowSelect } from 'react-table';
+import { Table, TableBody, TableContainer, TableHead, Paper, Typography } from '@mui/material';
 
 import Column from './Columns';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import Paper from '@mui/material/Paper';
 import { StyledTableCell, StyledTableRow } from './TableStyle';
-import { forwardRef, useEffect, useRef } from 'react';
-import Typography from '@mui/material/Typography';
-interface IData {
-    email: string;
-    id: number;
-    name: string;
-    phone: string;
-    username: string;
-    website: string;
-};
-interface IColumn {
-    Header: string;
-    accessor: any;
-}
+import { IColumn, IData } from '../../assets/Interfaces';
+import RowCheckBox from './RowCheckBox';
 
-
-export default function DisplayTable({ data }: { data: IData[]; }): any {
+function DisplayTable({ data }: { data: IData[]; }): any {
     const columns: IColumn[] = Column(data);
-
-
-    const IndeterminateCheckbox = forwardRef(
-        ({ indeterminate, ...rest }: any, ref) => {
-            const defaultRef = useRef();
-            const resolvedRef: any = ref || defaultRef;
-            useEffect(() => {
-                resolvedRef.current.indeterminate = indeterminate;
-            }, [resolvedRef, indeterminate]);
-
-            return (
-                <>
-                    <input type="checkbox" ref={resolvedRef} {...rest} />
-                </>
-            );
-        }
-    );
+    const IndeterminateCheckbox = RowCheckBox();
 
     const {
         getTableProps,
@@ -50,12 +18,13 @@ export default function DisplayTable({ data }: { data: IData[]; }): any {
         rows,
         prepareRow,
         selectedFlatRows,
-        state: { selectedRowIds },
+        // state: { selectedRowIds },
     } = useTable(
         { columns, data, },
         useSortBy,
         useBlockLayout,
         useRowSelect,
+        useResizeColumns,
         hooks => {
             hooks.allColumns.push(columns => [
                 // Let's make a column for selection
@@ -88,9 +57,7 @@ export default function DisplayTable({ data }: { data: IData[]; }): any {
             //     selectionGroupHeader.canResize = false;
             // });
         },
-        useResizeColumns,
     );
-
 
     return (
         <>
@@ -135,25 +102,10 @@ export default function DisplayTable({ data }: { data: IData[]; }): any {
                     </TableBody>
                 </Table>
             </TableContainer>
-
-            <p>Selected Rows: {Object.keys(selectedRowIds).length}</p>
-            <pre>
-                <code>
-                    {JSON.stringify(
-                        {
-                            selectedRowIds: selectedRowIds,
-                            'selectedFlatRows[].original': selectedFlatRows.map(
-                                (d: any) => d.original
-                            ),
-                        },
-                        null,
-                        2
-                    )}
-                </code>
-            </pre>
         </>
 
     );
 }
 
 
+export default memo(DisplayTable);
