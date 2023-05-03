@@ -1,4 +1,5 @@
-import { useTable, useSortBy } from 'react-table';
+import { useTable, useBlockLayout, useResizeColumns, useSortBy } from 'react-table';
+
 import Column from './Columns';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -29,7 +30,9 @@ export default function DisplayTable({ data }: { data: IData[]; }): any {
         prepareRow,
     } = useTable(
         { columns, data, },
-        useSortBy
+        useSortBy,
+        useBlockLayout,
+        useResizeColumns
     );
 
 
@@ -44,6 +47,11 @@ export default function DisplayTable({ data }: { data: IData[]; }): any {
                                 {headerGroup.headers.map((column: any) => (
                                     <StyledTableCell {...column.getHeaderProps(column.getSortByToggleProps())}>
                                         {column.render('Header')}
+                                        <div
+                                            {...column.getResizerProps()}
+                                            className={`resizer ${column.isResizing ? 'isResizing' : ''
+                                                }`}
+                                        />
                                         <span>
                                             {column.isSorted ? column.isSortedDesc ? ' 🔽' : ' 🔼' : ''}
                                         </span>
