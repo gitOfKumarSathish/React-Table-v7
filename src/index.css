@@ -76,7 +76,7 @@ button:focus-visible {
 
 .resizer {
   display: inline-block;
-  background: #000;
+  background: #ccc;
   width: 10px;
   height: 100%;
   position: absolute;
@@ -88,4 +88,8 @@ button:focus-visible {
 
 .resizer.isResizing {
   background: #ccc;
+}
+
+tr.highlightMe {
+  background: #ccc !important;
 }
