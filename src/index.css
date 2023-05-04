@@ -93,3 +93,11 @@ button:focus-visible {
 tr.highlightMe {
   background: #ccc !important;
 }
+
+.colorCell p {
+  width: 25px;
+  text-align: center;
+  margin: 0 auto;
+  border-radius: 50%;
+  height: 25px;
+}

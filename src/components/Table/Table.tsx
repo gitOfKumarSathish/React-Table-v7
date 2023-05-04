@@ -11,6 +11,8 @@ function DisplayTable({ data }: { data: IData[]; }): any {
     const columns: IColumn[] = Column(data);
     const IndeterminateCheckbox = RowCheckBox();
 
+    const initialState = { hiddenColumns: ['phone'] };
+
     const {
         getTableProps,
         getTableBodyProps,
@@ -20,7 +22,7 @@ function DisplayTable({ data }: { data: IData[]; }): any {
         selectedFlatRows,
         // state: { selectedRowIds },
     } = useTable(
-        { columns, data, },
+        { columns, data, initialState },
         useSortBy,
         useBlockLayout,
         useRowSelect,
@@ -94,7 +96,7 @@ function DisplayTable({ data }: { data: IData[]; }): any {
                             prepareRow(row);
                             return (
                                 <StyledTableRow  {...row.getRowProps()} key={i} className={selectedFlatRows.length === 1 && row.isSelected ? 'highlightMe' : ''}>
-                                    {row.cells.map((cell: any) => <StyledTableCell align="center" component="th" scope="row" {...cell.getCellProps()}>{cell.render('Cell')}</StyledTableCell>
+                                    {row.cells.map((cell: any) => <StyledTableCell align="center" component="th" scope="row" {...cell.getCellProps()} className='colorCell'>{cell.render('Cell')}</StyledTableCell>
                                     )}
                                 </StyledTableRow>
                             );

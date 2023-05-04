@@ -21,7 +21,7 @@ interface IQueryResponse {
 
 function DataTable() {
     const response: IQueryResponse = useQuery('repoData', () =>
-        axios.get('44b9b4a6-5655-442f-afe9-ef5bb22ac215')
+        axios.get("45cf4fab-ee81-4f7f-bba8-be51b94a367d")
             .then((response) => response.data)
     );
 
