@@ -1,8 +1,6 @@
 import React from 'react';
+import { Cell } from '../../assets/Interfaces';
 
-interface Cell {
-    value: string;
-}
 
 const ImageCell: React.FC<{ cell: Cell; }> = ({ cell: { value } }) => (
     <img

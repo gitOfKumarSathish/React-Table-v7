@@ -1,8 +1,6 @@
 import React from "react";
+import { Cell } from "../../assets/Interfaces";
 
-interface Cell {
-    value: string;
-}
 
 const ColorCell: React.FC<{ cell: Cell; }> = ({ cell: { value } }) => (
     <p

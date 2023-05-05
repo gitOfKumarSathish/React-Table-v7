@@ -1,4 +1,4 @@
-[
+export const userData = [
   {
     "id": 1,
     "name": "Leanne Graham",
@@ -7,7 +7,19 @@
     "phone": "1-770-736-8031 x56442",
     "website": "hildegard.org",
     "color": "black",
-    "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg"
+    "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg",
+    // "subRows": [
+    //   {
+    //     "id": 81,
+    //     "name": "Nicholas Runolfsdottir V",
+    //     "username": "Maxime_Nienow",
+    //     "email": "Sherwood@rosamond.me",
+    //     "phone": "586.493.6943 x140",
+    //     "website": "jacynthe.com",
+    //     "color": "orange",
+    //     "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg"
+    //   },
+    // ]
   },
   {
     "id": 2,
@@ -17,7 +29,8 @@
     "phone": "010-692-6593 x09125",
     "website": "anastasia.net",
     "color": "red",
-    "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg"
+    "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg",
+
   },
   {
     "id": 3,
@@ -27,7 +40,8 @@
     "phone": "1-463-123-4447",
     "website": "ramiro.info",
     "color": "green",
-    "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg"
+    "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg",
+
   },
   {
     "id": 4,
@@ -37,7 +51,8 @@
     "phone": "493-170-9623 x156",
     "website": "kale.biz",
     "color": "orange",
-    "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg"
+    "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg",
+
   },
   {
     "id": 5,
@@ -47,7 +62,8 @@
     "phone": "(254)954-1289",
     "website": "demarco.info",
     "color": "yellow",
-    "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg"
+    "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg",
+
   },
   {
     "id": 6,
@@ -57,7 +73,8 @@
     "phone": "1-477-935-8478 x6430",
     "website": "ola.org",
     "color": "yellow",
-    "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg"
+    "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg",
+
   },
   {
     "id": 7,
@@ -67,7 +84,8 @@
     "phone": "210.067.6132",
     "website": "elvis.io",
     "color": "yellow",
-    "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg"
+    "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg",
+
   },
   {
     "id": 8,
@@ -77,7 +95,29 @@
     "phone": "586.493.6943 x140",
     "website": "jacynthe.com",
     "color": "yellow",
-    "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg"
+    "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg",
+    "subRows": [
+      {
+        "id": 8,
+        "name": "Nicholas Runolfsdottir V",
+        "username": "Maxime_Nienow",
+        "email": "Sherwood@rosamond.me",
+        "phone": "586.493.6943 x140",
+        "website": "jacynthe.com",
+        "color": "yellow",
+        "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg"
+      },
+      {
+        "id": 8,
+        "name": "Nicholas Runolfsdottir V",
+        "username": "Maxime_Nienow",
+        "email": "Sherwood@rosamond.me",
+        "phone": "586.493.6943 x140",
+        "website": "jacynthe.com",
+        "color": "yellow",
+        "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg"
+      }
+    ]
   },
   {
     "id": 9,
@@ -87,7 +127,8 @@
     "phone": "(775)976-6794 x41206",
     "website": "conrad.com",
     "color": "yellow",
-    "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg"
+    "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg",
+
   },
   {
     "id": 10,
@@ -97,6 +138,7 @@
     "phone": "024-648-3804",
     "website": "ambrose.net",
     "color": "yellow",
-    "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg"
+    "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg",
+
   }
-]
+];

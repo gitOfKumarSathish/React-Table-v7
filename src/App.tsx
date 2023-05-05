@@ -1,6 +1,6 @@
 import './App.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import DataTable from './components/Table/UserData';
+import DataTable from './components/Table/ApiData';
 import axios from 'axios';
 import { memo } from 'react';
 
