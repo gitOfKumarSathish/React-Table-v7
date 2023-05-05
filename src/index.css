@@ -101,3 +101,28 @@ tr.highlightMe {
   border-radius: 50%;
   height: 25px;
 }
+
+main.mainTableView {
+  display: flex;
+  justify-content: space-between;
+}
+
+.columnToggler {
+  width: 20%;
+  position: sticky;
+  top: 0;
+  text-align: center;
+  height: 60vh;
+}
+
+.columnName label {
+  display: flex;
+  align-items: center;
+}
+
+
+.columnName {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

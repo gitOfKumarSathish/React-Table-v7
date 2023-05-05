@@ -1,13 +1,5 @@
-// interface IUser {
-//     data: {
-//         email: string;
-//         id: number;
-//         name: string;
-//         phone: string;
-//         username: string;
-//         website: string;
-//     };
-// }
+import { JSXElementConstructor, ReactElement, ReactFragment, ReactPortal } from 'react';
+import { CheckboxProps } from '@mui/material';
 
 interface IData {
     email: string;
@@ -48,11 +40,32 @@ interface SelectedColumn {
     [key: string]: boolean;
 }
 
+interface ICheckboxProps {
+    getToggleHideAllColumnsProps: () => CheckboxProps;
+    allColumns: any[];
+}
+
+
 export type {
     IData,
     IColumn,
     IUser,
     IQueryResponse,
     Cell,
-    SelectedColumn
+    SelectedColumn,
+    ICheckboxProps
 };
+
+
+// Define the type of the columns
+// type Column = {
+//     Header: string;
+//     accessor: string;
+//     // Add more properties as needed
+// };
+
+// Create a generic table props type to allow for any columns
+// type TableProps<T extends object> = {
+//     columns: ColumnInstance<T>[];
+//     data: T[];
+// };
