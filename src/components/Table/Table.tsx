@@ -1,6 +1,6 @@
 import { memo } from 'react';
-import { useTable, useBlockLayout, useResizeColumns, useSortBy, useRowSelect } from 'react-table';
-import { Table, TableBody, TableContainer, TableHead, Paper, Typography } from '@mui/material';
+import { useTable, useBlockLayout, useResizeColumns, useSortBy, useRowSelect, useExpanded } from 'react-table';
+import { Table, TableBody, TableContainer, TableHead, Paper, Typography, Checkbox } from '@mui/material';
 
 import Column from './Columns';
 import { StyledTableCell, StyledTableRow } from './TableStyle';
@@ -12,21 +12,25 @@ function DisplayTable({ data }: { data: IData[]; }): any {
     const IndeterminateCheckbox = RowCheckBox();
 
     const initialState = { hiddenColumns: ['phone'] };
-
+    const label = { inputProps: { 'aria-label': 'Hide Columns' } };
+    console.log('columns', columns);
     const {
         getTableProps,
         getTableBodyProps,
         headerGroups,
         rows,
         prepareRow,
+        allColumns,
+        getToggleHideAllColumnsProps,
         selectedFlatRows,
-        // state: { selectedRowIds },
+        state: { selectedRowIds, expanded },
     } = useTable(
         { columns, data, initialState },
         useSortBy,
         useBlockLayout,
-        useRowSelect,
         useResizeColumns,
+        useExpanded,
+        useRowSelect,
         hooks => {
             hooks.allColumns.push(columns => [
                 // Let's make a column for selection
@@ -51,15 +55,49 @@ function DisplayTable({ data }: { data: IData[]; }): any {
                         </div>
                     ),
                 },
+                {
+                    id: "expander", // Make sure it has an ID
+                    Header: ({ getToggleAllRowsExpandedProps, isAllRowsExpanded }: any) => (
+                        <span {...getToggleAllRowsExpandedProps()}>
+                            {isAllRowsExpanded ? "👇" : "👉"}
+                        </span>
+                    ),
+                    Cell: ({ row }: any) =>
+                        // Use the row.canExpand and row.getToggleRowExpandedProps prop getter
+                        // to build the toggle for expanding a row
+                        row.canExpand ? (
+                            <span
+                                {
+                                ...row.getToggleRowExpandedProps({
+                                    style: {
+                                        // We can even use the row.depth property
+                                        // and paddingLeft to indicate the depth
+                                        // of the row
+                                        paddingLeft: `${row.depth * 2}rem`
+                                    }
+                                })
+                                }
+                            >
+                                {row.isExpanded ? "👇" : "👉"}
+                            </span>
+                        ) : null
+                },
                 ...columns,
             ]);
-            // hooks.useInstanceBeforeDimensions.push(({ headerGroups }) => {
+            // hooks.useInstanceBeforeDimensions.push(({headerGroups}) => {
             //     // fix the parent group of the selection button to not be resizable
             //     const selectionGroupHeader = headerGroups[0].headers[0];
             //     selectionGroupHeader.canResize = false;
             // });
         },
     );
+    const handleColumnHide = (event: React.ChangeEvent<HTMLInputElement>) => {
+        console.log('event', event.target.name);
+        const selected = {
+            [event.target.name]: event.target.checked,
+        };
+        console.log('selected', selected);
+    };
 
     return (
         <>
@@ -67,6 +105,20 @@ function DisplayTable({ data }: { data: IData[]; }): any {
             <Typography variant="h6" align='right'>
                 Total Selected Rows: {selectedFlatRows.length}
             </Typography>
+
+            <section>
+                <div>
+                    <Checkbox {...getToggleHideAllColumnsProps()} defaultChecked /> Toogle All
+                </div>
+                {allColumns.map((column, i) => (
+                    <div key={i}>
+                        <label>
+                            <Checkbox {...column.getToggleHiddenProps()} defaultChecked /> {column.Header}
+                        </label>
+                    </div>
+                ))}
+            </section>
+
             <TableContainer component={Paper}>
                 <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table" {...getTableProps()}>
                     <TableHead>
@@ -104,6 +156,9 @@ function DisplayTable({ data }: { data: IData[]; }): any {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <pre>
+                <code>{JSON.stringify({ expanded: expanded }, null, 2)}</code>
+            </pre>
         </>
 
     );

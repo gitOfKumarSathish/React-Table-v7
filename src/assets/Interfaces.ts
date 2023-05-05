@@ -44,10 +44,15 @@ interface Cell {
     value: string;
 }
 
+interface SelectedColumn {
+    [key: string]: boolean;
+}
+
 export type {
     IData,
     IColumn,
     IUser,
     IQueryResponse,
-    Cell
+    Cell,
+    SelectedColumn
 };
