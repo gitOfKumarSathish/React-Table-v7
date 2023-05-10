@@ -45,6 +45,16 @@ interface ICheckboxProps {
     allColumns: any[];
 }
 
+type SortingDisableType = string[];
+
+type ColumnType = {
+    Header: string;
+    accessor: string;
+    disableSortBy?: boolean;
+    Cell?: any;
+    className?: string;
+};
+
 
 export type {
     IData,
@@ -53,7 +63,9 @@ export type {
     IQueryResponse,
     Cell,
     SelectedColumn,
-    ICheckboxProps
+    ICheckboxProps,
+    SortingDisableType,
+    ColumnType
 };
 
 

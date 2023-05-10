@@ -1,35 +1,27 @@
 import { useMemo } from "react";
 import ColorCell from "./ColorCell";
 import ImageCell from "./ImageCell";
-import { IData } from "../../assets/Interfaces";
+import { ColumnType, IData, SortingDisableType } from "../../assets/Interfaces";
 
-type SortingDisableType = string[];
-
-type ColumnType = {
-  Header: string;
-  accessor: string;
-  disableSortBy?: boolean;
-  Cell?: any;
-  className?: string;
-};
-
-function Column(data: IData[], sortingDisable: SortingDisableType): ColumnType[] {
-  const columnsList = Object.keys(data[0]);
-  const columnHeaders = columnsList.slice(0, columnsList.length - 1);
-  const columns = useMemo(() => columnHeaders.map(header => {
-
+function createColumns(columnsList: string[], sortingDisable: SortingDisableType, ImageCell: any, ColorCell: any): ColumnType[] {
+  return columnsList.map(header => {
     let column: ColumnType = { Header: header, accessor: header };
     if (sortingDisable.includes(header)) {
-      column = { ...column, disableSortBy: true, className: 'disabledSorting' };
+      column.disableSortBy = true;
+      column.className = 'disabledSorting';
     }
     if (header === "image") {
-      column = { ...column, Cell: ImageCell };
+      column.Cell = ImageCell;
     } else if (header === "color") {
-      column = { ...column, Cell: ColorCell };
+      column.Cell = ColorCell;
     }
-    console.log('columns: ', column);
     return column;
-  }), []);
+  });
+}
+
+function Column(data: IData[], sortingDisable: SortingDisableType): ColumnType[] {
+  const columnsList = Object.keys(data[0]).filter(col => col !== 'additionalInfo');
+  const columns = useMemo(() => createColumns(columnsList, sortingDisable, ImageCell, ColorCell), []);
   return columns;
 }
 

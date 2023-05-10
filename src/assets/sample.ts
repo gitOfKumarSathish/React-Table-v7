@@ -10,17 +10,16 @@ export const APIresponse = {
       "website": "hildegard.org",
       "color": "black",
       "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg",
-      "subRows": [
+      "additionalInfo": [
         {
-          "id": 81,
-          "name": "Nicholas Runolfsdottir V",
-          "username": "Maxime_Nienow",
-          "email": "Sherwood@rosamond.me",
-          "phone": "586.493.6943 x140",
-          "website": "jacynthe.com",
-          "color": "orange",
-          "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg"
-        },
+          "company name": "Romaguera-Crona",
+          "catchPhrase": "Multi-layered client-server neural-net",
+          "bs": "harness real-time e-markets",
+          "street": "Kulas Light",
+          "suite": "Apt. 556",
+          "city": "Gwenborough",
+          "zipcode": "92998-3874",
+        }
       ]
     },
     {
@@ -32,28 +31,17 @@ export const APIresponse = {
       "website": "anastasia.net",
       "color": "pink",
       "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg",
-      "subRows": [
+      "additionalInfo": [
         {
-          "id": 10,
-          "name": "Nicholas Runolfsdottir V",
-          "username": "Maxime_Nienow",
-          "email": "Sherwood@rosamond.me",
-          "phone": "586.493.6943 x140",
-          "website": "jacynthe.com",
-          "color": "yellow",
-          "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg"
-        },
-        {
-          "id": 12,
-          "name": "Nicholas Runolfsdottir V",
-          "username": "Maxime_Nienow",
-          "email": "Sherwood@rosamond.me",
-          "phone": "586.493.6943 x140",
-          "website": "jacynthe.com",
-          "color": "yellow",
-          "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg"
+          "company name": "Romaguera-Crona",
+          "catchPhrase": "Multi-layered client-server neural-net",
+          "bs": "harness real-time e-markets",
+          "street": "Kulas Light",
+          "suite": "Apt. 556",
+          "city": "Gwenborough",
+          "zipcode": "92998-3874",
         }
-      ],
+      ]
     },
     {
       "id": 3,
@@ -64,28 +52,28 @@ export const APIresponse = {
       "website": "ramiro.info",
       "color": "green",
       "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg",
-      "subRows": [
-        {
-          "id": 10,
-          "name": "Nicholas Runolfsdottir V",
-          "username": "Maxime_Nienow",
-          "email": "Sherwood@rosamond.me",
-          "phone": "586.493.6943 x140",
-          "website": "jacynthe.com",
-          "color": "yellow",
-          "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg"
-        },
-        {
-          "id": 12,
-          "name": "Nicholas Runolfsdottir V",
-          "username": "Maxime_Nienow",
-          "email": "Sherwood@rosamond.me",
-          "phone": "586.493.6943 x140",
-          "website": "jacynthe.com",
-          "color": "yellow",
-          "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg"
-        }
-      ],
+      // "subRows": [
+      //   {
+      //     "id": 10,
+      //     "name": "Nicholas Runolfsdottir V",
+      //     "username": "Maxime_Nienow",
+      //     "email": "Sherwood@rosamond.me",
+      //     "phone": "586.493.6943 x140",
+      //     "website": "jacynthe.com",
+      //     "color": "yellow",
+      //     "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg"
+      //   },
+      //   {
+      //     "id": 12,
+      //     "name": "Nicholas Runolfsdottir V",
+      //     "username": "Maxime_Nienow",
+      //     "email": "Sherwood@rosamond.me",
+      //     "phone": "586.493.6943 x140",
+      //     "website": "jacynthe.com",
+      //     "color": "yellow",
+      //     "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg"
+      //   }
+      // ],
     },
     {
       "id": 4,

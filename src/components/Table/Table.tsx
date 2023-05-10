@@ -10,6 +10,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import ModalBoxer from '../Modal';
 import { ThemeContext } from '../../App';
 
+import { useCallback } from 'react';
+
 
 
 
@@ -26,13 +28,14 @@ function DisplayTable({ data, disableSorting }: any): any {
     const IndeterminateCheckbox = RowCheckBox();
 
     const classes = useStyles();
-    const initialState = { hiddenColumns: ['phone'] };
+    const initialState = { hiddenColumns: ['phone', 'additionalInfo'] };
     const {
         getTableProps,
         getTableBodyProps,
         headerGroups,
         rows,
         prepareRow,
+        visibleColumns,
         allColumns,
         getToggleHideAllColumnsProps,
         selectedFlatRows,
@@ -77,25 +80,35 @@ function DisplayTable({ data, disableSorting }: any): any {
                             {isAllRowsExpanded ? "👇" : "👉"}
                         </span>
                     ),
-                    Cell: ({ row }: any) =>
-                        // Use the row.canExpand and row.getToggleRowExpandedProps prop getter
-                        // to build the toggle for expanding a row
-                        row.canExpand ? (
-                            <span
-                                {
-                                ...row.getToggleRowExpandedProps({
-                                    style: {
-                                        // We can even use the row.depth property
-                                        // and paddingLeft to indicate the depth
-                                        // of the row
-                                        paddingLeft: `${row.depth * 2}rem`
-                                    }
-                                })
-                                }
-                            >
-                                {row.isExpanded ? "👇" : "👉"}
-                            </span>
-                        ) : null
+                    Cell: ({ row }: any) => (
+                        // Use Cell to render an expander for each row.
+                        // We can use the getToggleRowExpandedProps prop-getter
+                        // to build the expander.
+                        row.original?.additionalInfo ? (
+                            <span {...row.getToggleRowExpandedProps()}>
+                                {row.isExpanded && row.original?.additionalInfo
+                                    ? '👇' : '👉'}
+                            </span>) : null
+                    ),
+                    // Cell: ({ row }: any) =>
+                    //     // Use the row.canExpand and row.getToggleRowExpandedProps prop getter
+                    //     // to build the toggle for expanding a row
+                    //     row.canExpand ? (
+                    //         <span
+                    //             {
+                    //             ...row.getToggleRowExpandedProps({
+                    //                 style: {
+                    //                     // We can even use the row.depth property
+                    //                     // and paddingLeft to indicate the depth
+                    //                     // of the row
+                    //                     paddingLeft: `${row.depth * 2}rem`
+                    //                 }
+                    //             })
+                    //             }
+                    //         >
+                    //             {row.isExpanded ? "👇" : "👉"}
+                    //         </span>
+                    //     ) : null
                 },
                 ...columns,
             ]);
@@ -105,6 +118,22 @@ function DisplayTable({ data, disableSorting }: any): any {
             //     selectionGroupHeader.canResize = false;
             // });
         },
+    );
+
+    // Create a function that will render our row sub components
+    const renderRowSubComponent = useCallback(
+        ({ row }: any) => (
+            <>
+                {row.original.additionalInfo && (<Typography variant="h6" align='left' className='additionalInfo'>
+                    {
+                        Object.keys(row.original.additionalInfo[0]).map((info, index) => {
+                            return <p className='lineInfo'> <strong>{info} :</strong> {row.original.additionalInfo[0][info]}</p>;
+
+                        })}
+                </Typography>)}
+            </>
+        ),
+        []
     );
     return (
         <>
@@ -133,7 +162,6 @@ function DisplayTable({ data, disableSorting }: any): any {
                                     {headerGroup.headers.map((column: any) => (
                                         <StyledTableCell {...column.getHeaderProps(column.getSortByToggleProps())} className={column?.className}>
                                             {column.render('Header')}
-                                            {console.log('column', column)}
                                             {column.canResize && (
                                                 <div
                                                     {...column.getResizerProps()}
@@ -154,10 +182,28 @@ function DisplayTable({ data, disableSorting }: any): any {
                             {rows.map((row: any, i) => {
                                 prepareRow(row);
                                 return (
-                                    <StyledTableRow  {...row.getRowProps()} key={i} className={selectedFlatRows.length === 1 && row.isSelected ? 'highlightMe' : ''}>
-                                        {row.cells.map((cell: any) => <StyledTableCell align="center" component="th" scope="row" {...cell.getCellProps()} className='colorCell'>{cell.render('Cell')}</StyledTableCell>
-                                        )}
-                                    </StyledTableRow>
+                                    <>
+                                        <StyledTableRow  {...row.getRowProps()} key={i} className={selectedFlatRows.length === 1 && row.isSelected ? 'highlightMe' : ''}>
+                                            {row.cells.map((cell: any) => <StyledTableCell align="center" component="th" scope="row" {...cell.getCellProps()} className='colorCell'>{cell.render('Cell')}</StyledTableCell>
+                                            )}
+                                        </StyledTableRow>
+                                        {
+                                            row.isExpanded ? (
+                                                <tr>
+                                                    <td colSpan={visibleColumns.length}>
+                                                        {/*
+                                                            Inside it, call our renderRowSubComponent function. In reality,
+                                                            you could pass whatever you want as props to
+                                                            a component like this, including the entire
+                                                            table instance. But for this example, we'll just
+                                                            pass the row
+                                                            */}
+                                                        {renderRowSubComponent({ row })}
+                                                    </td>
+                                                </tr>
+                                            ) : null
+                                        }
+                                    </>
                                 );
                             })}
                         </TableBody>
