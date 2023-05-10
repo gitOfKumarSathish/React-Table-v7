@@ -1,7 +1,15 @@
 
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { styled } from '@mui/material/styles';
+import { makeStyles } from '@mui/styles';
 import TableRow from '@mui/material/TableRow';
+import { Dialog } from '@mui/material';
+
+const useStyles = makeStyles({
+    customTableContainer: {
+        overflowX: "initial"
+    }
+});
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -26,7 +34,19 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuiDialogContent-root': {
+        padding: theme.spacing(2),
+    },
+    '& .MuiDialogActions-root': {
+        padding: theme.spacing(1),
+    },
+}));
+
+
 export {
     StyledTableCell,
-    StyledTableRow
+    StyledTableRow,
+    BootstrapDialog,
+    useStyles
 };

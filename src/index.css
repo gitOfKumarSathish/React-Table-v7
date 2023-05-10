@@ -14,6 +14,16 @@
   -webkit-text-size-adjust: 100%;
 }
 
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -125,4 +135,11 @@ main.mainTableView {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.ModalTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  line-height: unset;
 }

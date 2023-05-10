@@ -28,7 +28,7 @@ export const userData = [
     "email": "Shanna@melissa.tv",
     "phone": "010-692-6593 x09125",
     "website": "anastasia.net",
-    "color": "red",
+    "color": "pink",
     "image": "https://img.freepik.com/free-icon/paypal_318-183419.jpg",
     "subRows": [
       {
@@ -130,7 +130,7 @@ export const userData = [
   },
   {
     "id": 8,
-    "name": "Nicholas Runolfsdottir V",
+    "name": "b Nicholas Runolfsdottir V",
     "username": "Maxime_Nienow",
     "email": "Sherwood@rosamond.me",
     "phone": "586.493.6943 x140",
@@ -162,7 +162,7 @@ export const userData = [
   },
   {
     "id": 8,
-    "name": "Nicholas Runolfsdottir V",
+    "name": "a Nicholas Runolfsdottir V",
     "username": "Maxime_Nienow",
     "email": "Sherwood@rosamond.me",
     "phone": "586.493.6943 x140",

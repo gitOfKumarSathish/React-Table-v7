@@ -1,19 +1,32 @@
 import { useTable, useBlockLayout, useResizeColumns, useSortBy, useRowSelect, useExpanded } from 'react-table';
-import { Table, TableBody, TableContainer, TableHead, Paper, Typography } from '@mui/material';
+import { Table, TableBody, TableContainer, TableHead, Paper, Typography, Button } from '@mui/material';
 
 import Column from './Columns';
-import { StyledTableCell, StyledTableRow } from './TableStyle';
+import { StyledTableCell, StyledTableRow, useStyles } from './TableStyle';
 import { IColumn, IData } from '../../assets/Interfaces';
 import RowCheckBox from './RowCheckBox';
-import HideColumns from './ColumnHide';
-import { memo } from 'react';
+import { memo, useContext } from 'react';
+import SettingsIcon from '@mui/icons-material/Settings';
+import ModalBoxer from '../Modal';
+import { ThemeContext } from '../../App';
+
+
+
 
 
 function DisplayTable({ data }: { data: IData[]; }): any {
     const columns: IColumn[] = Column(data);
+
+
+    const { userName, modalOpen, setModalOpen } = useContext(ThemeContext);
+
+    const handleOpen = () => {
+        setModalOpen(!modalOpen);
+    };
     // const columns:IColumn[] = useMemo(() => Column(data), [data]);
     const IndeterminateCheckbox = RowCheckBox();
 
+    const classes = useStyles();
     const initialState = { hiddenColumns: ['phone'] };
     const {
         getTableProps,
@@ -95,14 +108,23 @@ function DisplayTable({ data }: { data: IData[]; }): any {
     return (
         <>
             {/* <div>Table</div> */}
+            <h1>{userName}</h1>
             <Typography variant="h6" align='right'>
                 Total Selected Rows: {selectedFlatRows.length}
             </Typography>
-            <main className='mainTableView'>
-                {/* Columns Hiding */}
-                <HideColumns allColumns={allColumns} getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}></HideColumns>
+            <Typography align='right' margin={1}>
+                <Button variant="contained" startIcon={<SettingsIcon />} onClick={handleOpen} >
+                    Settings
+                </Button>
+            </Typography>
 
-                <TableContainer component={Paper}>
+            {/* Columns Hiding */}
+
+            <ModalBoxer open={modalOpen} allColumns={allColumns} getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}></ModalBoxer>
+            <main className='mainTableView'>
+
+
+                <TableContainer classes={{ root: classes.customTableContainer }} component={Paper}>
                     <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table" {...getTableProps()}>
                         <TableHead>
                             {headerGroups.map(headerGroup => (
