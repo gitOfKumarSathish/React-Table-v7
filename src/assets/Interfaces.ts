@@ -47,6 +47,14 @@ interface ICheckboxProps {
 
 type SortingDisableType = string[];
 
+interface RowProps {
+    additionalInfo: any; original: { additionalInfo: { [key: string]: string; }[]; };
+}
+
+interface Info {
+    [key: string]: string | number;
+}
+
 type ColumnType = {
     Header: string;
     accessor: string;
@@ -65,7 +73,9 @@ export type {
     SelectedColumn,
     ICheckboxProps,
     SortingDisableType,
-    ColumnType
+    ColumnType,
+    RowProps,
+    Info
 };
 
 
