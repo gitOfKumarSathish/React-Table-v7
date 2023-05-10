@@ -166,20 +166,13 @@ function DisplayTable({ data, disableSorting }: any): any {
                                 return (
                                     <>
                                         <StyledTableRow  {...row.getRowProps()} key={i} className={selectedFlatRows.length === 1 && row.isSelected ? 'highlightMe' : ''}>
-                                            {row.cells.map((cell: any) => <StyledTableCell align="center" component="th" scope="row" {...cell.getCellProps()} className='colorCell'>{cell.render('Cell')}</StyledTableCell>
+                                            {row.cells.map((cell: any, index: number) => <StyledTableCell align="center" component="th" scope="row" {...cell.getCellProps()} className='colorCell' key={index}>{cell.render('Cell')}</StyledTableCell>
                                             )}
                                         </StyledTableRow>
                                         {
                                             row.isExpanded ? (
                                                 <tr>
                                                     <td colSpan={visibleColumns.length}>
-                                                        {/*
-                                                            Inside it, call our renderRowSubComponent function. In reality,
-                                                            you could pass whatever you want as props to
-                                                            a component like this, including the entire
-                                                            table instance. But for this example, we'll just
-                                                            pass the row
-                                                            */}
                                                         {<RowSubComponent row={row} />}
                                                     </td>
                                                 </tr>

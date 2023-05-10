@@ -10,7 +10,7 @@ export const ThemeContext = createContext({
   modalOpen: false,
   setModalOpen: (e?: boolean) => { },
   columnStore: {},
-  setColumnStore: (e?: boolean) => { },
+  setColumnStore: (e?: []) => { },
 });
 
 const queryClient = new QueryClient();
