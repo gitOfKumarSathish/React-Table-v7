@@ -7,7 +7,7 @@ const RowSubComponent = memo(({ row }: { row: { original: RowProps; }; }) => {
         if (!row.original.additionalInfo) return null;
 
         return row.original.additionalInfo.map((info: Info) => (
-            <Typography variant="h6" align="left" className="additionalInfo" key={info.id}>
+            <Typography align="left" className="additionalInfo" key={info.id}>
                 {Object.entries(info).map(([key, value]) => (
                     <p className="lineInfo" key={key}>
                         <strong>{key}: </strong>

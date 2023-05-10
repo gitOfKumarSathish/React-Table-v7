@@ -11,6 +11,7 @@ import ModalBoxer from '../Modal';
 import { ThemeContext } from '../../App';
 
 import { useCallback } from 'react';
+import RowSubComponent from './RowSubComponent';
 
 
 
@@ -120,21 +121,6 @@ function DisplayTable({ data, disableSorting }: any): any {
         },
     );
 
-    // Create a function that will render our row sub components
-    const renderRowSubComponent = useCallback(
-        ({ row }: any) => (
-            <>
-                {row.original.additionalInfo && (<Typography variant="h6" align='left' className='additionalInfo'>
-                    {
-                        Object.keys(row.original.additionalInfo[0]).map((info, index) => {
-                            return <p className='lineInfo'> <strong>{info} :</strong> {row.original.additionalInfo[0][info]}</p>;
-
-                        })}
-                </Typography>)}
-            </>
-        ),
-        []
-    );
     return (
         <>
             {/* <div>Table</div> */}
@@ -198,7 +184,7 @@ function DisplayTable({ data, disableSorting }: any): any {
                                                             table instance. But for this example, we'll just
                                                             pass the row
                                                             */}
-                                                        {renderRowSubComponent({ row })}
+                                                        {<RowSubComponent row={row} />}
                                                     </td>
                                                 </tr>
                                             ) : null

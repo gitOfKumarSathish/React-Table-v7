@@ -148,3 +148,8 @@ main.mainTableView {
 .disabledSorting {
   opacity: 0.5;
 }
+
+p.lineInfo {
+  margin: 1% 1% 0;
+  font-size: 14px;
+}
