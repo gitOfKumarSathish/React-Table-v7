@@ -143,3 +143,7 @@ main.mainTableView {
   align-items: center;
   line-height: unset;
 }
+
+.disabledSorting {
+  opacity: 0.5;
+}

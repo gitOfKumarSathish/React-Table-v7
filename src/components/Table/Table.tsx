@@ -3,7 +3,7 @@ import { Table, TableBody, TableContainer, TableHead, Paper, Typography, Button 
 
 import Column from './Columns';
 import { StyledTableCell, StyledTableRow, useStyles } from './TableStyle';
-import { IColumn, IData } from '../../assets/Interfaces';
+import { IColumn } from '../../assets/Interfaces';
 import RowCheckBox from './RowCheckBox';
 import { memo, useContext } from 'react';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -13,10 +13,9 @@ import { ThemeContext } from '../../App';
 
 
 
+function DisplayTable({ data, disableSorting }: any): any {
 
-function DisplayTable({ data }: { data: IData[]; }): any {
-    const columns: IColumn[] = Column(data);
-
+    const columns: IColumn[] = Column(data, disableSorting);
 
     const { userName, modalOpen, setModalOpen } = useContext(ThemeContext);
 
@@ -39,7 +38,9 @@ function DisplayTable({ data }: { data: IData[]; }): any {
         selectedFlatRows,
         state: { selectedRowIds, expanded },
     } = useTable(
-        { columns, data, initialState },
+        {
+            columns, data, initialState,
+        },
         useSortBy,
         useBlockLayout,
         useResizeColumns,
@@ -130,8 +131,9 @@ function DisplayTable({ data }: { data: IData[]; }): any {
                             {headerGroups.map(headerGroup => (
                                 <StyledTableRow {...headerGroup.getHeaderGroupProps()}>
                                     {headerGroup.headers.map((column: any) => (
-                                        <StyledTableCell {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                        <StyledTableCell {...column.getHeaderProps(column.getSortByToggleProps())} className={column?.className}>
                                             {column.render('Header')}
+                                            {console.log('column', column)}
                                             {column.canResize && (
                                                 <div
                                                     {...column.getResizerProps()}

@@ -3,8 +3,9 @@ import axios from 'axios';
 import { memo } from 'react';
 
 import DisplayTable from './Table';
-import { userData } from '../../assets/sample';
+// import { userData } from '../../assets/sample';
 import { IQueryResponse } from '../../assets/Interfaces';
+import { APIresponse } from '../../assets/sample';
 
 function DataTable() {
     const response: IQueryResponse = useQuery('repoData', () =>
@@ -16,7 +17,8 @@ function DataTable() {
     if (response.error) return <p>An error has occurred: {response.error.message}</p>;
 
     // return <DisplayTable data={response.data} />;
-    return <DisplayTable data={userData} />;
+    // return <DisplayTable data={userData} />;
+    return <DisplayTable data={APIresponse.data} disableSorting={APIresponse.disableSorting} />;
 }
 
 export default memo(DataTable);

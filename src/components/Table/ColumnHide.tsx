@@ -11,14 +11,15 @@ interface IColumnState {
 
 const initialColumnState = {};
 function HideColumns({ getToggleHideAllColumnsProps, allColumns }: ICheckboxProps) {
-    const savedState = JSON.parse(localStorage.getItem('columnState'));
+    const savedState = JSON.parse(localStorage.getItem('columnState') || '{}');
+
 
     const [columnState, setColumnState] = useState(savedState || initialColumnState);
 
     useEffect(() => {
         if (localStorage) {
             // load column state saved in localStorage if it exists
-            const savedState = JSON.parse(localStorage.getItem('columnState'));
+            const savedState = JSON.parse(localStorage.getItem('columnState') || '{}');
             if (savedState) {
                 setColumnState(savedState);
                 return;
@@ -40,25 +41,6 @@ function HideColumns({ getToggleHideAllColumnsProps, allColumns }: ICheckboxProp
     // localStorage.setItem('localColumn', JSON.stringify(columnState));
     // console.log('allColumns', allColumns);
     const renderColumns = allColumns.slice(2);
-    // renderColumns.map((column, i) => {
-    //     for (const key in columnState) {
-    //         if (Object.prototype.hasOwnProperty.call(columnState, key)) {
-    //             const element = columnState[key];
-    //             // console.log('columnState', columnState);
-    //             console.log('column', column);
-    //             console.log('element', element, key);
-    //             if (column.id === key && element) {
-    //                 console.log('after something column', column, i);
-    //                 column.isVisible = false;
-    //                 // delete renderColumns[i];
-    //                 // renderColumns.splice(i, 1);
-    //             }
-    //         }
-    //     }
-    // });
-
-    // console.log('allColumns', allColumns);
-    // console.log('renderColumns', renderColumns);
 
     const toggleColumnVisibility = (columnId: string) => {
         setColumnState((prevState: { [x: string]: any; }) => {
