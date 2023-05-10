@@ -1,26 +1,21 @@
+import { memo, useContext } from 'react';
 import { useTable, useBlockLayout, useResizeColumns, useSortBy, useRowSelect, useExpanded } from 'react-table';
 import { Table, TableBody, TableContainer, TableHead, Paper, Typography, Button } from '@mui/material';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 import Column from './Columns';
 import { StyledTableCell, StyledTableRow, useStyles } from './TableStyle';
 import { IColumn } from '../../assets/Interfaces';
 import RowCheckBox from './RowCheckBox';
-import { memo, useContext } from 'react';
-import SettingsIcon from '@mui/icons-material/Settings';
 import ModalBoxer from '../Modal';
 import { ThemeContext } from '../../App';
-
-import { useCallback } from 'react';
 import RowSubComponent from './RowSubComponent';
-
-
-
 
 function DisplayTable({ data, disableSorting }: any): any {
 
     const columns: IColumn[] = Column(data, disableSorting);
 
-    const { userName, modalOpen, setModalOpen } = useContext(ThemeContext);
+    const { userName, modalOpen, setModalOpen, columnStore } = useContext(ThemeContext);
 
     const handleOpen = () => {
         setModalOpen(!modalOpen);
@@ -29,7 +24,8 @@ function DisplayTable({ data, disableSorting }: any): any {
     const IndeterminateCheckbox = RowCheckBox();
 
     const classes = useStyles();
-    const initialState = { hiddenColumns: ['phone', 'additionalInfo'] };
+    const trueKeys = Object.keys(columnStore).filter(key => columnStore[key]);
+    const initialState = { hiddenColumns: trueKeys };
     const {
         getTableProps,
         getTableBodyProps,

@@ -1,16 +1,19 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useContext, useEffect, useState } from 'react';
 
 import { Checkbox } from '@mui/material';
 
 import { ColumnInstance } from 'react-table';
 import { ICheckboxProps } from '../../assets/Interfaces';
+import { ThemeContext } from '../../App';
 
-interface IColumnState {
-    [key: string]: boolean;
-}
+// interface IColumnState {
+//     [key: string]: boolean;
+// }
 
 const initialColumnState = {};
 function HideColumns({ getToggleHideAllColumnsProps, allColumns }: ICheckboxProps) {
+
+    const { setColumnStore } = useContext(ThemeContext);
     const savedState = JSON.parse(localStorage.getItem('columnState') || '{}');
 
 
@@ -22,10 +25,12 @@ function HideColumns({ getToggleHideAllColumnsProps, allColumns }: ICheckboxProp
             const savedState = JSON.parse(localStorage.getItem('columnState') || '{}');
             if (savedState) {
                 setColumnState(savedState);
+                setColumnStore(savedState);
                 return;
             }
         }  // use props as initial state if no localStorage exists or saved state is not found
         setColumnState(allColumns.slice(2));
+        setColumnStore(savedState);
     }, [allColumns]);
 
     useEffect(() => {
@@ -35,11 +40,6 @@ function HideColumns({ getToggleHideAllColumnsProps, allColumns }: ICheckboxProp
         }
     }, [columnState]);
 
-
-    console.log('columnState', columnState);
-    // // Hide columns for Expanded and Selections columns
-    // localStorage.setItem('localColumn', JSON.stringify(columnState));
-    // console.log('allColumns', allColumns);
     const renderColumns = allColumns.slice(2);
 
     const toggleColumnVisibility = (columnId: string) => {
@@ -48,8 +48,6 @@ function HideColumns({ getToggleHideAllColumnsProps, allColumns }: ICheckboxProp
             return newState;
         });
     };
-
-    console.log('columnState', columnState);
 
     return (
         <section className=''>
