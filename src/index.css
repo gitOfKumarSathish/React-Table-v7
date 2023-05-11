@@ -166,3 +166,7 @@ p.lineInfo {
 .css-apqrd9-MuiTableBody-root {
   text-align: left;
 }
+
+.Mui-TableHeadCell-Content-Labels {
+  text-transform: capitalize;
+}

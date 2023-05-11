@@ -2,10 +2,13 @@ import React, { useMemo, useState, useEffect } from 'react';
 import MaterialReactTable, {
     MRT_RowSelectionState,
     type MRT_Row,
+    MRT_ToggleFiltersButton,
+    MRT_ShowHideColumnsButton
 } from 'material-react-table';
 import { APIresponse } from '../assets/sample';
-import { Box, Typography } from '@mui/material';
+import { Box, IconButton, Tooltip, Typography, Zoom } from '@mui/material';
 import { Columns } from '../components/Table/Columns';
+import InfoIcon from '@mui/icons-material/Info';
 
 const Example = () => {
     // prepare Columns Title
@@ -35,6 +38,7 @@ const Example = () => {
         <MaterialReactTable
             columns={columns}
             data={data}
+
             renderDetailPanel={({ row }) => (
                 (row.original?.additionalInfo[0] &&
                     <Box
@@ -87,7 +91,7 @@ const Example = () => {
                 // sorting: [{ id: 'id', desc: false }], //sort by state by default
             }}
             muiToolbarAlertBannerChipProps={{ color: 'primary' }}
-            muiTableContainerProps={{ sx: { maxHeight: 400 } }}
+            muiTableContainerProps={{ sx: { maxHeight: 500 } }}
             muiTableBodyRowProps={({ row }) => ({
                 onClick: row.getToggleSelectedHandler(),
                 sx: { cursor: 'pointer' },
@@ -112,6 +116,22 @@ const Example = () => {
             })}
             enablePagination={false}
             enablePinning
+            renderToolbarInternalActions={({ table }) => (
+                <Box>
+                    {/* add custom button to print table  */}
+
+                    <Tooltip TransitionComponent={Zoom} title="To perform multiple sorting, please press and hold down the Shift key.">
+                        <IconButton >
+                            <InfoIcon />
+                        </IconButton>
+                    </Tooltip>
+                    {/* along-side built-in buttons in whatever order you want them */}
+                    <MRT_ToggleFiltersButton table={table} />
+                    {/* <MRT_ToggleDensePaddingButton table={table} /> */}
+                    {/* <MRT_FullScreenToggleButton table={table} /> */}
+                    <MRT_ShowHideColumnsButton table={table} />
+                </Box>
+            )}
             // muiTableHeadCellColumnActionsButtonProps={row => console.log('row', (row.table.getAllFlatColumns()).map(x => x.getIsVisible()))}
             muiTableHeadCellColumnActionsButtonProps={row => storeColumns(row.table.getAllFlatColumns())}
         // displayColumnDefOptions={{ 'mrt-row-actions': { size: 300 } }}
@@ -124,25 +144,16 @@ const Example = () => {
 
         />
     );
-    function storeColumns(columnList) {
-        // const check = columnList.map((x, i) => x.getIsVisible());
+    function storeColumns(columnList: any[]) {
+        const falseIndices = columnList
+            .filter((column) => !column.getIsVisible())
+            .map((column) => ({ [column.id]: false }));
 
-        const falseIndices = columnList.reduce((acc, x, i) => {
-            if (!x.getIsVisible()) {
-                acc.push(i);
-            }
-            return acc;
-        }, []);
+        localStorage.setItem('columnState', JSON.stringify(falseIndices));
 
-        const finalArray = falseIndices.map((x) => ({
-            [columnList[x].id]: false,
-        }));
-
-        localStorage.setItem('columnState', JSON.stringify(finalArray));
-
-        console.log('finalArray', finalArray);
-
+        console.log('falseIndices', falseIndices);
     }
+
 };
 
 export default React.memo(Example);
