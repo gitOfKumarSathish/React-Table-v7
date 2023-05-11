@@ -176,10 +176,10 @@ function DisplayTable({ data, disableSorting, selectionType }: any): any {
             <main className='mainTableView'>
 
 
-                <TableContainer classes={{ root: classes.customTableContainer }} component={Paper}>
-                    <Table stickyHeader sx={{ minWidth: 750 }} aria-label="Rich Data Table" {...getTableProps()}>
+                <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
+                    <Table stickyHeader aria-label="Rich Data Table" {...getTableProps()}>
                         <TableHead>
-                            <TableRow sx={{ minWidth: '100%' }} >
+                            <TableRow>
                                 {headerGroups.map(headerGroup => (
                                     <StyledTableRow {...headerGroup.getHeaderGroupProps()}>
                                         {headerGroup.headers.map((column: any) => (

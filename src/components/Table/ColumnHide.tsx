@@ -6,10 +6,6 @@ import { ColumnInstance } from 'react-table';
 import { ICheckboxProps } from '../../assets/Interfaces';
 import { ThemeContext } from '../../App';
 
-// interface IColumnState {
-//     [key: string]: boolean;
-// }
-
 const initialColumnState = {};
 function HideColumns({ getToggleHideAllColumnsProps, allColumns }: ICheckboxProps) {
 
@@ -52,11 +48,11 @@ function HideColumns({ getToggleHideAllColumnsProps, allColumns }: ICheckboxProp
     return (
         <section className=''>
             <h2>Hide Columns</h2>
-            <div className='columnName'>
+            {/* <div className='columnName'>
                 <label>
                     <Checkbox {...getToggleHideAllColumnsProps()} /> Toggle All
                 </label>
-            </div>
+            </div> */}
             {renderColumns.map((column: ColumnInstance, i: number) => (
                 <div key={i} className='columnName'>
                     <label>
