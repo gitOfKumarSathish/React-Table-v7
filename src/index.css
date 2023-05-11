@@ -105,7 +105,7 @@ tr.highlightMe {
   background: #ccc !important;
 }
 
-.colorCell p {
+p.colorBox {
   width: 25px;
   text-align: center;
   margin: 0 auto;
