@@ -1,6 +1,6 @@
-import { memo, useContext } from 'react';
+import { memo, useContext, useState } from 'react';
 import { useTable, useBlockLayout, useResizeColumns, useSortBy, useRowSelect, useExpanded } from 'react-table';
-import { Table, TableBody, TableContainer, TableHead, Paper, Typography, Button } from '@mui/material';
+import { Table, TableBody, TableContainer, TableHead, Paper, Typography, Button, Checkbox, TableRow } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 import Column from './Columns';
@@ -14,6 +14,12 @@ import RowSubComponent from './RowSubComponent';
 function DisplayTable({ data, disableSorting }: any): any {
 
     const columns: IColumn[] = Column(data, disableSorting);
+
+
+    const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
+    const [selectedRowIndex, setSelectedRowIndex] = useState<number>(-1);
+    const [selectType, setSelectType] = useState<'single' | 'multi'>('single');
+
 
     const { userName, modalOpen, setModalOpen, columnStore } = useContext(ThemeContext);
 
@@ -36,7 +42,7 @@ function DisplayTable({ data, disableSorting }: any): any {
         allColumns,
         getToggleHideAllColumnsProps,
         selectedFlatRows,
-        state: { selectedRowIds, expanded },
+        state: { expanded },
     } = useTable(
         {
             columns, data, initialState,
@@ -58,9 +64,23 @@ function DisplayTable({ data, disableSorting }: any): any {
                     // The header can use the table's getToggleAllRowsSelectedProps method
                     // to render a checkbox
                     Header: ({ getToggleAllRowsSelectedProps }: any) => (
-                        <div>
-                            <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
-                        </div>
+                        // <div>
+                        //     <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+                        // </div>
+                        <>
+                            {console.log('selectType', selectType)};
+                            {selectType === 'multi' &&
+                                // <StyledTableCell padding="checkbox">
+                                <Checkbox
+                                    indeterminate={selectedRowIds.length > 0 && selectedRowIds.length < data.length}
+                                    checked={selectedRowIds.length === data.length}
+                                    onChange={handleSelectAllClick}
+                                    inputProps={{ 'aria-label': 'select all' }}
+                                />
+                                // </StyledTableCell>
+                            }
+                        </>
+
                     ),
                     // The cell can use the individual row's getToggleRowSelectedProps method
                     // to the render a checkbox
@@ -117,6 +137,37 @@ function DisplayTable({ data, disableSorting }: any): any {
         },
     );
 
+
+    function handleRowClick(row: any) {
+        if (selectType === 'single') { // single-select
+            if (selectedRowIndex >= 0) {
+                rows[selectedRowIndex].isSelected = false; // clear previous selection
+            }
+            row.isSelected = true;
+            setSelectedRowIndex(row.index);
+            console.log('row selected', row);
+        } else { // multi-select
+            const id = row.original.id.toString(); // use row's unique id as key
+            const newSelectedRowIds = [...selectedRowIds];
+            const index = selectedRowIds.indexOf(id);
+            if (index >= 0) {
+                newSelectedRowIds.splice(index, 1);
+            } else {
+                newSelectedRowIds.push(id);
+            }
+            setSelectedRowIds(newSelectedRowIds);
+        }
+    }
+
+    function handleSelectAllClick() {
+        const newSelectedRowIds = selectType === 'multi' ? data.map((n) => n.id.toString()) : [];
+        setSelectedRowIds(newSelectedRowIds);
+        console.log('newSelectedRowIds', newSelectedRowIds);
+    }
+
+
+
+
     return (
         <>
             {/* <div>Table</div> */}
@@ -131,6 +182,13 @@ function DisplayTable({ data, disableSorting }: any): any {
             </Typography>
 
             {/* Columns Hiding */}
+            <div>
+                <label>Select Type: </label>
+                <select value={selectType} onChange={(e) => setSelectType(e.target.value as 'single' | 'multi')}>
+                    <option value="single">Single</option>
+                    <option value="multi">Multi</option>
+                </select>
+            </div>
 
             <ModalBoxer open={modalOpen} allColumns={allColumns} getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}></ModalBoxer>
             <main className='mainTableView'>
@@ -139,33 +197,43 @@ function DisplayTable({ data, disableSorting }: any): any {
                 <TableContainer classes={{ root: classes.customTableContainer }} component={Paper}>
                     <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table" {...getTableProps()}>
                         <TableHead>
-                            {headerGroups.map(headerGroup => (
-                                <StyledTableRow {...headerGroup.getHeaderGroupProps()}>
-                                    {headerGroup.headers.map((column: any) => (
-                                        <StyledTableCell {...column.getHeaderProps(column.getSortByToggleProps())} className={column?.className}>
-                                            {column.render('Header')}
-                                            {column.canResize && (
-                                                <div
-                                                    {...column.getResizerProps()}
-                                                    className={`resizer ${column.isResizing ? 'isResizing' : ''
-                                                        }`}
-                                                />
-                                            )}
-                                            <span>
-                                                {column.isSorted ? column.isSortedDesc ? ' 🔽' : ' 🔼' : ''}
-                                            </span>
-                                        </StyledTableCell>
-                                    ))}
-                                </StyledTableRow>
-                            ))}
+                            <TableRow sx={{ minWidth: '100%' }}>
 
+                                {headerGroups.map(headerGroup => (
+                                    <StyledTableRow {...headerGroup.getHeaderGroupProps()}>
+                                        {headerGroup.headers.map((column: any) => (
+                                            <StyledTableCell {...column.getHeaderProps(column.getSortByToggleProps())} className={column?.className}>
+                                                {column.render('Header')}
+                                                {column.canResize && (
+                                                    <div
+                                                        {...column.getResizerProps()}
+                                                        className={`resizer ${column.isResizing ? 'isResizing' : ''
+                                                            }`}
+                                                    />
+                                                )}
+                                                <span>
+                                                    {column.isSorted ? column.isSortedDesc ? ' 🔽' : ' 🔼' : ''}
+                                                </span>
+                                            </StyledTableCell>
+                                        ))}
+                                    </StyledTableRow>
+                                ))}
+                            </TableRow>
                         </TableHead>
                         <TableBody {...getTableBodyProps()}>
                             {rows.map((row: any, i) => {
                                 prepareRow(row);
                                 return (
                                     <>
-                                        <StyledTableRow  {...row.getRowProps()} key={i} className={selectedFlatRows.length === 1 && row.isSelected ? 'highlightMe' : ''}>
+                                        <StyledTableRow  {...row.getRowProps()} key={i} className={selectedFlatRows.length === 1 && row.isSelected ? 'highlightMe' : ''}
+                                            onClick={() => handleRowClick(row)}
+                                            style={{
+                                                backgroundColor:
+                                                    (selectType === 'single' && row.isSelected) || (selectType === 'multi' && selectedRowIds.includes(row.original.id.toString()))
+                                                        ? '#e0e0e0'
+                                                        : 'transparent',
+                                            }}
+                                        >
                                             {row.cells.map((cell: any, index: number) => <StyledTableCell align="center" component="th" scope="row" {...cell.getCellProps()} className='colorCell' key={index}>{cell.render('Cell')}</StyledTableCell>
                                             )}
                                         </StyledTableRow>
@@ -185,9 +253,6 @@ function DisplayTable({ data, disableSorting }: any): any {
                     </Table>
                 </TableContainer>
             </main>
-            <pre>
-                <code>{JSON.stringify({ expanded: expanded }, null, 2)}</code>
-            </pre>
         </>
 
     );
