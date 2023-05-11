@@ -21,7 +21,11 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
     [`&.${tableCellClasses.body}`]: {
         fontSize: 14,
-    },
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        height: 60
+    }
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
