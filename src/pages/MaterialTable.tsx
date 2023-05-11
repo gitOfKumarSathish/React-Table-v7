@@ -120,16 +120,17 @@ const Example = () => {
                 <Box>
                     {/* add custom button to print table  */}
 
-                    <Tooltip TransitionComponent={Zoom} title="To perform multiple sorting, please press and hold down the Shift key.">
-                        <IconButton >
-                            <InfoIcon />
-                        </IconButton>
-                    </Tooltip>
+
                     {/* along-side built-in buttons in whatever order you want them */}
                     <MRT_ToggleFiltersButton table={table} />
                     {/* <MRT_ToggleDensePaddingButton table={table} /> */}
                     {/* <MRT_FullScreenToggleButton table={table} /> */}
                     <MRT_ShowHideColumnsButton table={table} />
+                    <Tooltip TransitionComponent={Zoom} title="To perform multiple sorting, please press and hold down the Shift key.">
+                        <IconButton >
+                            <InfoIcon />
+                        </IconButton>
+                    </Tooltip>
                 </Box>
             )}
             // muiTableHeadCellColumnActionsButtonProps={row => console.log('row', (row.table.getAllFlatColumns()).map(x => x.getIsVisible()))}
