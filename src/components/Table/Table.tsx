@@ -80,7 +80,6 @@ function DisplayTable({ data, disableSorting, selectionType }: any): any {
 
                         return (
                             <>
-                                {/* {console.log('selectType', selectType)} */}
                                 {selectionType === 'multi' && (
                                     <StyledTableCell padding="checkbox">
                                         <IndeterminateCheckbox
@@ -100,7 +99,6 @@ function DisplayTable({ data, disableSorting, selectionType }: any): any {
                     // to the render a checkbox
                     Cell: ({ row }: any) => (
                         <>
-                            {/* {console.log('row', row)} */}
                             {selectionType === 'multi' && <div>
                                 <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
                             </div>}
@@ -157,36 +155,28 @@ function DisplayTable({ data, disableSorting, selectionType }: any): any {
 
     function handleRowClick(row: any) {
         if (selectionType === 'single') { // single-select
-            if (selectedRowIndex >= 0 || row.isExpanded) {
+            if (selectedRowIndex >= 0) {
                 rows[selectedRowIndex].isSelected = false; // clear previous selection
             }
-            row.isSelected = true;
             setSelectedRowIndex(row.index);
+            row.isSelected = true;
             console.log('row selected', row);
         }
         // else { // multi-select
         //     const id = row.original.id.toString(); // use row's unique id as key
         //     const newSelectedRowIds = [...selectedRowIds];
-        //     console.log('selectedRowIds', selectedRowIds);
         //     const index = selectedRowIds.indexOf(id);
 
         //     // row.isSelected = true;
-        //     console.log('row selected', row);
-        //     console.log('index', index);
-        //     console.log('selectedRowIndex', selectedRowIndex);
         //     if (index >= 0) {
         //         newSelectedRowIds.splice(index, 1);
-        //         console.log('selectedRowIds.indexOf(id); if', selectedRowIds.indexOf(id));
         //         row.isSelected = id === selectedRowIds.indexOf(id);
         //         // row.isSelected = false;
         //     } else {
         //         newSelectedRowIds.push(id);
-        //         console.log('selectedRowIds.indexOf(id); else', selectedRowIds.indexOf(id));
         //         row.isSelected = true;
         //     }
         //     console.log('newSelectedRowIds', newSelectedRowIds);
-        //     const a = row.id.includes(index);
-        //     console.log('a', a);
         //     setSelectedRowIds(newSelectedRowIds);
         // }
     }
@@ -194,7 +184,7 @@ function DisplayTable({ data, disableSorting, selectionType }: any): any {
     function handleSelectAllClick() {
         const newSelectedRowIds = selectionType === 'multi' ? data.map((n) => n.id.toString()) : [];
         setSelectedRowIds(newSelectedRowIds);
-        console.log('newSelectedRowIds', newSelectedRowIds);
+        // console.log('newSelectedRowIds', newSelectedRowIds);
     }
 
 
@@ -261,12 +251,14 @@ function DisplayTable({ data, disableSorting, selectionType }: any): any {
                                             onClick={() => handleRowClick(row)}
                                             style={{
                                                 backgroundColor:
-                                                    (selectionType === 'single' && row.isSelected)
+                                                    (selectionType === 'single' && (row.isSelected || row.isExpanded))
                                                         ? '#e0e0e0'
                                                         : 'transparent',
                                             }}
                                         >
-                                            {row.cells.map((cell: any, index: number) => <StyledTableCell align="center" component="th" scope="row" {...cell.getCellProps()} className='colorCell' key={index}>{cell.render('Cell')}</StyledTableCell>
+                                            {row.cells.map((cell: any, index: number) => <StyledTableCell align="center" component="th" scope="row" {...cell.getCellProps()} className='colorCell' key={index} title={cell.value}>
+                                                {cell.render('Cell')}
+                                            </StyledTableCell>
                                             )}
                                         </StyledTableRow>
                                         {
