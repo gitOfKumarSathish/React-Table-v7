@@ -18,7 +18,7 @@ function DataTable() {
 
     // return <DisplayTable data={response.data} />;
     // return <DisplayTable data={userData} />;
-    return <DisplayTable data={APIresponse.data} disableSorting={APIresponse.disableSorting} />;
+    return <DisplayTable data={APIresponse.data} disableSorting={APIresponse.disableSorting} selectionType={APIresponse.selectionType} />;
 }
 
 export default memo(DataTable);

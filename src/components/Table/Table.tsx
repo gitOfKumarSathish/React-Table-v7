@@ -11,7 +11,7 @@ import ModalBoxer from '../Modal';
 import { ThemeContext } from '../../App';
 import RowSubComponent from './RowSubComponent';
 
-function DisplayTable({ data, disableSorting }: any): any {
+function DisplayTable({ data, disableSorting, selectionType }: any): any {
 
     const columns: IColumn[] = Column(data, disableSorting);
 
@@ -67,20 +67,6 @@ function DisplayTable({ data, disableSorting }: any): any {
                         // <div>
                         //     <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
                         // </div>
-                        // <>
-                        //     {console.log('selectType', selectType)}
-                        //     {console.log('selectedRowIds.length', selectedRowIds)}
-                        //     {console.log('data.length', data)}
-                        //     {selectType === 'multi' &&
-                        //         <StyledTableCell padding="checkbox">
-                        //             <IndeterminateCheckbox
-                        //                 indeterminate={selectedRowIds.length > 0 && selectedRowIds.length < data.length}
-                        //                 checked={selectedRowIds.length === data.length}
-                        //                 onChange={handleSelectAllClick}
-                        //             />
-                        //         </StyledTableCell>
-                        //     }
-                        // </>
                         const [isMounted, setIsMounted] = useState(false);
                         const [selectAllProps, setSelectAllProps] = useState({});
 
@@ -90,14 +76,12 @@ function DisplayTable({ data, disableSorting }: any): any {
                             } else {
                                 setIsMounted(true);
                             }
-                        }, [getToggleAllRowsSelectedProps, isMounted, selectType]);
+                        }, [getToggleAllRowsSelectedProps, isMounted]);
 
                         return (
                             <>
-                                {console.log('selectType', selectType)}
-                                {console.log('selectedRowIds.length', selectedRowIds)}
-                                {console.log('data.length', data)}
-                                {selectType === 'multi' && (
+                                {/* {console.log('selectType', selectType)} */}
+                                {selectionType === 'multi' && (
                                     <StyledTableCell padding="checkbox">
                                         <IndeterminateCheckbox
                                             indeterminate={selectedRowIds.length > 0 && selectedRowIds.length < data.length}
@@ -116,7 +100,8 @@ function DisplayTable({ data, disableSorting }: any): any {
                     // to the render a checkbox
                     Cell: ({ row }: any) => (
                         <>
-                            {selectType === 'multi' && <div>
+                            {/* {console.log('row', row)} */}
+                            {selectionType === 'multi' && <div>
                                 <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
                             </div>}
                         </>
@@ -171,32 +156,43 @@ function DisplayTable({ data, disableSorting }: any): any {
 
 
     function handleRowClick(row: any) {
-        if (selectType === 'single') { // single-select
-            if (selectedRowIndex >= 0) {
+        if (selectionType === 'single') { // single-select
+            if (selectedRowIndex >= 0 || row.isExpanded) {
                 rows[selectedRowIndex].isSelected = false; // clear previous selection
             }
             row.isSelected = true;
             setSelectedRowIndex(row.index);
-            // console.log('row selected', row);
-        } else { // multi-select
-            const id = row.original.id.toString(); // use row's unique id as key
-            const newSelectedRowIds = [...selectedRowIds];
-            console.log('newSelectedRowIds', newSelectedRowIds);
-            console.log('selectedRowIds', selectedRowIds);
-            const index = selectedRowIds.indexOf(id);
-            console.log('index', index);
-            if (index >= 0) {
-                newSelectedRowIds.splice(index, 1);
-            } else {
-                newSelectedRowIds.push(id);
-            }
-            console.log('newSelectedRowIds', newSelectedRowIds);
-            setSelectedRowIds(newSelectedRowIds);
+            console.log('row selected', row);
         }
+        // else { // multi-select
+        //     const id = row.original.id.toString(); // use row's unique id as key
+        //     const newSelectedRowIds = [...selectedRowIds];
+        //     console.log('selectedRowIds', selectedRowIds);
+        //     const index = selectedRowIds.indexOf(id);
+
+        //     // row.isSelected = true;
+        //     console.log('row selected', row);
+        //     console.log('index', index);
+        //     console.log('selectedRowIndex', selectedRowIndex);
+        //     if (index >= 0) {
+        //         newSelectedRowIds.splice(index, 1);
+        //         console.log('selectedRowIds.indexOf(id); if', selectedRowIds.indexOf(id));
+        //         row.isSelected = id === selectedRowIds.indexOf(id);
+        //         // row.isSelected = false;
+        //     } else {
+        //         newSelectedRowIds.push(id);
+        //         console.log('selectedRowIds.indexOf(id); else', selectedRowIds.indexOf(id));
+        //         row.isSelected = true;
+        //     }
+        //     console.log('newSelectedRowIds', newSelectedRowIds);
+        //     const a = row.id.includes(index);
+        //     console.log('a', a);
+        //     setSelectedRowIds(newSelectedRowIds);
+        // }
     }
 
     function handleSelectAllClick() {
-        const newSelectedRowIds = selectType === 'multi' ? data.map((n) => n.id.toString()) : [];
+        const newSelectedRowIds = selectionType === 'multi' ? data.map((n) => n.id.toString()) : [];
         setSelectedRowIds(newSelectedRowIds);
         console.log('newSelectedRowIds', newSelectedRowIds);
     }
@@ -208,9 +204,10 @@ function DisplayTable({ data, disableSorting }: any): any {
         <>
             {/* <div>Table</div> */}
             <h1>{userName}</h1>
-            <Typography variant="h6" align='right'>
+            {selectionType === 'multi' && <Typography variant="h6" align='right'>
                 Total Selected Rows: {selectedFlatRows.length}
             </Typography>
+            }
             <Typography align='right' margin={1}>
                 <Button variant="contained" startIcon={<SettingsIcon />} onClick={handleOpen} >
                     Settings
@@ -218,13 +215,13 @@ function DisplayTable({ data, disableSorting }: any): any {
             </Typography>
 
             {/* Columns Hiding */}
-            <div>
+            {/* <div>
                 <label>Select Type: </label>
                 <select value={selectType} onChange={(e) => setSelectType(e.target.value as 'single' | 'multi')}>
                     <option value="single">Single</option>
                     <option value="multi">Multi</option>
                 </select>
-            </div>
+            </div> */}
 
             <ModalBoxer open={modalOpen} allColumns={allColumns} getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}></ModalBoxer>
             <main className='mainTableView'>
@@ -234,16 +231,6 @@ function DisplayTable({ data, disableSorting }: any): any {
                     <Table stickyHeader sx={{ minWidth: 750 }} aria-label="Rich Data Table" {...getTableProps()}>
                         <TableHead>
                             <TableRow sx={{ minWidth: '100%' }} >
-                                {/* {selectType === 'multi' &&
-                                    <StyledTableCell padding="checkbox">
-                                        <Checkbox
-                                            indeterminate={selectedRowIds.length > 0 && selectedRowIds.length < data.length}
-                                            checked={selectedRowIds.length === data.length}
-                                            onChange={handleSelectAllClick}
-                                            inputProps={{ 'aria-label': 'select all' }}
-                                        />
-                                    </StyledTableCell>
-                                } */}
                                 {headerGroups.map(headerGroup => (
                                     <StyledTableRow {...headerGroup.getHeaderGroupProps()}>
                                         {headerGroup.headers.map((column: any) => (
@@ -270,11 +257,11 @@ function DisplayTable({ data, disableSorting }: any): any {
                                 prepareRow(row);
                                 return (
                                     <>
-                                        <StyledTableRow  {...row.getRowProps()} key={i} className={selectedFlatRows.length === 1 && row.isSelected ? 'highlightMe' : ''}
+                                        <StyledTableRow  {...row.getRowProps()} key={i}
                                             onClick={() => handleRowClick(row)}
                                             style={{
                                                 backgroundColor:
-                                                    (selectType === 'single' && row.isSelected) || (selectType === 'multi' && selectedRowIds.includes(row.original.id.toString()))
+                                                    (selectionType === 'single' && row.isSelected)
                                                         ? '#e0e0e0'
                                                         : 'transparent',
                                             }}
