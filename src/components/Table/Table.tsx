@@ -1,6 +1,6 @@
-import { memo, useContext } from 'react';
+import { memo, useContext, useState, useEffect } from 'react';
 import { useTable, useBlockLayout, useResizeColumns, useSortBy, useRowSelect, useExpanded } from 'react-table';
-import { Table, TableBody, TableContainer, TableHead, Paper, Typography, Button } from '@mui/material';
+import { Table, TableBody, TableContainer, TableHead, Paper, Typography, Button, Checkbox, TableRow } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 import Column from './Columns';
@@ -11,9 +11,15 @@ import ModalBoxer from '../Modal';
 import { ThemeContext } from '../../App';
 import RowSubComponent from './RowSubComponent';
 
-function DisplayTable({ data, disableSorting }: any): any {
+function DisplayTable({ data, disableSorting, selectionType }: any): any {
 
     const columns: IColumn[] = Column(data, disableSorting);
+
+
+    const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
+    const [selectedRowIndex, setSelectedRowIndex] = useState<number>(-1);
+    const [selectType, setSelectType] = useState<'single' | 'multi'>('single');
+
 
     const { userName, modalOpen, setModalOpen, columnStore } = useContext(ThemeContext);
 
@@ -36,7 +42,7 @@ function DisplayTable({ data, disableSorting }: any): any {
         allColumns,
         getToggleHideAllColumnsProps,
         selectedFlatRows,
-        state: { selectedRowIds, expanded },
+        state: { expanded },
     } = useTable(
         {
             columns, data, initialState,
@@ -57,17 +63,46 @@ function DisplayTable({ data, disableSorting }: any): any {
                     maxWidth: 35,
                     // The header can use the table's getToggleAllRowsSelectedProps method
                     // to render a checkbox
-                    Header: ({ getToggleAllRowsSelectedProps }: any) => (
-                        <div>
-                            <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
-                        </div>
-                    ),
+                    Header: ({ getToggleAllRowsSelectedProps }: any) => {
+                        // <div>
+                        //     <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+                        // </div>
+                        const [isMounted, setIsMounted] = useState(false);
+                        const [selectAllProps, setSelectAllProps] = useState({});
+
+                        useEffect(() => {
+                            if (isMounted) {
+                                setSelectAllProps(getToggleAllRowsSelectedProps());
+                            } else {
+                                setIsMounted(true);
+                            }
+                        }, [getToggleAllRowsSelectedProps, isMounted]);
+
+                        return (
+                            <>
+                                {selectionType === 'multi' && (
+                                    <StyledTableCell padding="checkbox">
+                                        <IndeterminateCheckbox
+                                            indeterminate={selectedRowIds.length > 0 && selectedRowIds.length < data.length}
+                                            checked={selectedRowIds.length !== data.length}
+                                            onChange={handleSelectAllClick}
+                                            {...selectAllProps}
+                                        />
+                                    </StyledTableCell>
+                                )}
+                            </>
+                        );
+
+
+                    },
                     // The cell can use the individual row's getToggleRowSelectedProps method
                     // to the render a checkbox
                     Cell: ({ row }: any) => (
-                        <div>
-                            <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-                        </div>
+                        <>
+                            {selectionType === 'multi' && <div>
+                                <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+                            </div>}
+                        </>
                     ),
                 },
                 {
@@ -85,7 +120,7 @@ function DisplayTable({ data, disableSorting }: any): any {
                             <span {...row.getToggleRowExpandedProps()}>
                                 {row.isExpanded && row.original?.additionalInfo
                                     ? '👇' : '👉'}
-                            </span>) : null
+                            </span>) : <span> &nbsp;</span>
                     ),
                     // Cell: ({ row }: any) =>
                     //     // Use the row.canExpand and row.getToggleRowExpandedProps prop getter
@@ -109,7 +144,7 @@ function DisplayTable({ data, disableSorting }: any): any {
                 },
                 ...columns,
             ]);
-            // hooks.useInstanceBeforeDimensions.push(({headerGroups}) => {
+            // hooks.useInstanceBeforeDimensions.push(({ headerGroups }) => {
             //     // fix the parent group of the selection button to not be resizable
             //     const selectionGroupHeader = headerGroups[0].headers[0];
             //     selectionGroupHeader.canResize = false;
@@ -117,13 +152,52 @@ function DisplayTable({ data, disableSorting }: any): any {
         },
     );
 
+
+    function handleRowClick(row: any) {
+        if (selectionType === 'single') { // single-select
+            if (selectedRowIndex >= 0) {
+                rows[selectedRowIndex].isSelected = false; // clear previous selection
+            }
+            setSelectedRowIndex(row.index);
+            row.isSelected = true;
+            console.log('row selected', row);
+        }
+        // else { // multi-select
+        //     const id = row.original.id.toString(); // use row's unique id as key
+        //     const newSelectedRowIds = [...selectedRowIds];
+        //     const index = selectedRowIds.indexOf(id);
+
+        //     // row.isSelected = true;
+        //     if (index >= 0) {
+        //         newSelectedRowIds.splice(index, 1);
+        //         row.isSelected = id === selectedRowIds.indexOf(id);
+        //         // row.isSelected = false;
+        //     } else {
+        //         newSelectedRowIds.push(id);
+        //         row.isSelected = true;
+        //     }
+        //     console.log('newSelectedRowIds', newSelectedRowIds);
+        //     setSelectedRowIds(newSelectedRowIds);
+        // }
+    }
+
+    function handleSelectAllClick() {
+        const newSelectedRowIds = selectionType === 'multi' ? data.map((n) => n.id.toString()) : [];
+        setSelectedRowIds(newSelectedRowIds);
+        // console.log('newSelectedRowIds', newSelectedRowIds);
+    }
+
+
+
+
     return (
         <>
             {/* <div>Table</div> */}
             <h1>{userName}</h1>
-            <Typography variant="h6" align='right'>
+            {selectionType === 'multi' && <Typography variant="h6" align='right'>
                 Total Selected Rows: {selectedFlatRows.length}
             </Typography>
+            }
             <Typography align='right' margin={1}>
                 <Button variant="contained" startIcon={<SettingsIcon />} onClick={handleOpen} >
                     Settings
@@ -131,42 +205,60 @@ function DisplayTable({ data, disableSorting }: any): any {
             </Typography>
 
             {/* Columns Hiding */}
+            {/* <div>
+                <label>Select Type: </label>
+                <select value={selectType} onChange={(e) => setSelectType(e.target.value as 'single' | 'multi')}>
+                    <option value="single">Single</option>
+                    <option value="multi">Multi</option>
+                </select>
+            </div> */}
 
             <ModalBoxer open={modalOpen} allColumns={allColumns} getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}></ModalBoxer>
             <main className='mainTableView'>
 
 
                 <TableContainer classes={{ root: classes.customTableContainer }} component={Paper}>
-                    <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table" {...getTableProps()}>
+                    <Table stickyHeader sx={{ minWidth: 750 }} aria-label="Rich Data Table" {...getTableProps()}>
                         <TableHead>
-                            {headerGroups.map(headerGroup => (
-                                <StyledTableRow {...headerGroup.getHeaderGroupProps()}>
-                                    {headerGroup.headers.map((column: any) => (
-                                        <StyledTableCell {...column.getHeaderProps(column.getSortByToggleProps())} className={column?.className}>
-                                            {column.render('Header')}
-                                            {column.canResize && (
-                                                <div
-                                                    {...column.getResizerProps()}
-                                                    className={`resizer ${column.isResizing ? 'isResizing' : ''
-                                                        }`}
-                                                />
-                                            )}
-                                            <span>
-                                                {column.isSorted ? column.isSortedDesc ? ' 🔽' : ' 🔼' : ''}
-                                            </span>
-                                        </StyledTableCell>
-                                    ))}
-                                </StyledTableRow>
-                            ))}
-
+                            <TableRow sx={{ minWidth: '100%' }} >
+                                {headerGroups.map(headerGroup => (
+                                    <StyledTableRow {...headerGroup.getHeaderGroupProps()}>
+                                        {headerGroup.headers.map((column: any) => (
+                                            <StyledTableCell {...column.getHeaderProps(column.getSortByToggleProps())} className={column?.className}>
+                                                {column.render('Header')}
+                                                {column.canResize && (
+                                                    <div
+                                                        {...column.getResizerProps()}
+                                                        className={`resizer ${column.isResizing ? 'isResizing' : ''
+                                                            }`}
+                                                    />
+                                                )}
+                                                <span>
+                                                    {column.isSorted ? column.isSortedDesc ? ' 🔽' : ' 🔼' : ''}
+                                                </span>
+                                            </StyledTableCell>
+                                        ))}
+                                    </StyledTableRow>
+                                ))}
+                            </TableRow>
                         </TableHead>
                         <TableBody {...getTableBodyProps()}>
                             {rows.map((row: any, i) => {
                                 prepareRow(row);
                                 return (
                                     <>
-                                        <StyledTableRow  {...row.getRowProps()} key={i} className={selectedFlatRows.length === 1 && row.isSelected ? 'highlightMe' : ''}>
-                                            {row.cells.map((cell: any, index: number) => <StyledTableCell align="center" component="th" scope="row" {...cell.getCellProps()} className='colorCell' key={index}>{cell.render('Cell')}</StyledTableCell>
+                                        <StyledTableRow  {...row.getRowProps()} key={i}
+                                            onClick={() => handleRowClick(row)}
+                                            style={{
+                                                backgroundColor:
+                                                    (selectionType === 'single' && (row.isSelected || row.isExpanded))
+                                                        ? '#e0e0e0'
+                                                        : 'transparent',
+                                            }}
+                                        >
+                                            {row.cells.map((cell: any, index: number) => <StyledTableCell align="center" component="th" scope="row" {...cell.getCellProps()} className='colorCell' key={index} title={cell.value}>
+                                                {cell.render('Cell')}
+                                            </StyledTableCell>
                                             )}
                                         </StyledTableRow>
                                         {
@@ -185,9 +277,6 @@ function DisplayTable({ data, disableSorting }: any): any {
                     </Table>
                 </TableContainer>
             </main>
-            <pre>
-                <code>{JSON.stringify({ expanded: expanded }, null, 2)}</code>
-            </pre>
         </>
 
     );

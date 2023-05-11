@@ -269,7 +269,8 @@ export const APIresponse = {
 
     }
   ],
-  disableSorting: ['id', 'name', 'email',]
+  disableSorting: ['id', 'name', 'email',],
+  selectionType: 'multi'
 };
 
 export const userData = [
