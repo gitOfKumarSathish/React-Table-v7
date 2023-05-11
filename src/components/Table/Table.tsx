@@ -31,6 +31,9 @@ function DisplayTable({ data, disableSorting, selectionType }: any): any {
 
     const classes = useStyles();
     const trueKeys = Object.keys(columnStore).filter(key => columnStore[key]);
+    if (selectionType === 'single') {
+        trueKeys.push('selection');
+    }
     const initialState = { hiddenColumns: trueKeys };
     const {
         getTableProps,
@@ -42,7 +45,6 @@ function DisplayTable({ data, disableSorting, selectionType }: any): any {
         allColumns,
         getToggleHideAllColumnsProps,
         selectedFlatRows,
-        state: { expanded },
     } = useTable(
         {
             columns, data, initialState,
@@ -64,9 +66,6 @@ function DisplayTable({ data, disableSorting, selectionType }: any): any {
                     // The header can use the table's getToggleAllRowsSelectedProps method
                     // to render a checkbox
                     Header: ({ getToggleAllRowsSelectedProps }: any) => {
-                        // <div>
-                        //     <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
-                        // </div>
                         const [isMounted, setIsMounted] = useState(false);
                         const [selectAllProps, setSelectAllProps] = useState({});
 
@@ -107,6 +106,9 @@ function DisplayTable({ data, disableSorting, selectionType }: any): any {
                 },
                 {
                     id: "expander", // Make sure it has an ID
+                    minWidth: 85,
+                    width: 85,
+                    maxWidth: 85,
                     Header: ({ getToggleAllRowsExpandedProps, isAllRowsExpanded }: any) => (
                         <span {...getToggleAllRowsExpandedProps()}>
                             {isAllRowsExpanded ? "👇" : "👉"}
@@ -122,33 +124,9 @@ function DisplayTable({ data, disableSorting, selectionType }: any): any {
                                     ? '👇' : '👉'}
                             </span>) : <span> &nbsp;</span>
                     ),
-                    // Cell: ({ row }: any) =>
-                    //     // Use the row.canExpand and row.getToggleRowExpandedProps prop getter
-                    //     // to build the toggle for expanding a row
-                    //     row.canExpand ? (
-                    //         <span
-                    //             {
-                    //             ...row.getToggleRowExpandedProps({
-                    //                 style: {
-                    //                     // We can even use the row.depth property
-                    //                     // and paddingLeft to indicate the depth
-                    //                     // of the row
-                    //                     paddingLeft: `${row.depth * 2}rem`
-                    //                 }
-                    //             })
-                    //             }
-                    //         >
-                    //             {row.isExpanded ? "👇" : "👉"}
-                    //         </span>
-                    //     ) : null
                 },
                 ...columns,
             ]);
-            // hooks.useInstanceBeforeDimensions.push(({ headerGroups }) => {
-            //     // fix the parent group of the selection button to not be resizable
-            //     const selectionGroupHeader = headerGroups[0].headers[0];
-            //     selectionGroupHeader.canResize = false;
-            // });
         },
     );
 
@@ -162,23 +140,6 @@ function DisplayTable({ data, disableSorting, selectionType }: any): any {
             row.isSelected = true;
             console.log('row selected', row);
         }
-        // else { // multi-select
-        //     const id = row.original.id.toString(); // use row's unique id as key
-        //     const newSelectedRowIds = [...selectedRowIds];
-        //     const index = selectedRowIds.indexOf(id);
-
-        //     // row.isSelected = true;
-        //     if (index >= 0) {
-        //         newSelectedRowIds.splice(index, 1);
-        //         row.isSelected = id === selectedRowIds.indexOf(id);
-        //         // row.isSelected = false;
-        //     } else {
-        //         newSelectedRowIds.push(id);
-        //         row.isSelected = true;
-        //     }
-        //     console.log('newSelectedRowIds', newSelectedRowIds);
-        //     setSelectedRowIds(newSelectedRowIds);
-        // }
     }
 
     function handleSelectAllClick() {
@@ -192,8 +153,6 @@ function DisplayTable({ data, disableSorting, selectionType }: any): any {
 
     return (
         <>
-            {/* <div>Table</div> */}
-            <h1>{userName}</h1>
             {selectionType === 'multi' && <Typography variant="h6" align='right'>
                 Total Selected Rows: {selectedFlatRows.length}
             </Typography>
