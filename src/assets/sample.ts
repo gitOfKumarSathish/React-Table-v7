@@ -18,7 +18,7 @@ export const APIresponse = {
           "street": "Kulas Light",
           "suite": "Apt. 556",
           "city": "Gwenborough",
-          "zipcode": "92998-3874",
+          "zipCode": "92998-3874",
         }
       ]
     },
@@ -39,7 +39,7 @@ export const APIresponse = {
           "street": "Kulas Light",
           "suite": "Apt. 556",
           "city": "Gwenborough",
-          "zipcode": "92998-3874",
+          "zipCode": "92998-3874",
         }
       ]
     },
@@ -60,7 +60,7 @@ export const APIresponse = {
           "street": "Kulas Light",
           "suite": "Apt. 556",
           "city": "Gwenborough",
-          "zipcode": "92998-3874",
+          "zipCode": "92998-3874",
         }
       ]
     },
@@ -81,7 +81,7 @@ export const APIresponse = {
           "street": "Kulas Light",
           "suite": "Apt. 556",
           "city": "Gwenborough",
-          "zipcode": "92998-3874",
+          "zipCode": "92998-3874",
         }
       ]
     },
@@ -102,7 +102,7 @@ export const APIresponse = {
           "street": "Kulas Light",
           "suite": "Apt. 556",
           "city": "Gwenborough",
-          "zipcode": "92998-3874",
+          "zipCode": "92998-3874",
         }
       ]
 
@@ -124,7 +124,7 @@ export const APIresponse = {
           "street": "Kulas Light",
           "suite": "Apt. 556",
           "city": "Gwenborough",
-          "zipcode": "92998-3874",
+          "zipCode": "92998-3874",
         }
       ]
 
@@ -146,7 +146,7 @@ export const APIresponse = {
           "street": "Kulas Light",
           "suite": "Apt. 556",
           "city": "Gwenborough",
-          "zipcode": "92998-3874",
+          "zipCode": "92998-3874",
         }
       ]
 
@@ -168,7 +168,7 @@ export const APIresponse = {
           "street": "Kulas Light",
           "suite": "Apt. 556",
           "city": "Gwenborough",
-          "zipcode": "92998-3874",
+          "zipCode": "92998-3874",
         }
       ]
     },
@@ -189,7 +189,7 @@ export const APIresponse = {
           "street": "Kulas Light",
           "suite": "Apt. 556",
           "city": "Gwenborough",
-          "zipcode": "92998-3874",
+          "zipCode": "92998-3874",
         }
       ]
     },
@@ -210,7 +210,7 @@ export const APIresponse = {
           "street": "Kulas Light",
           "suite": "Apt. 556",
           "city": "Gwenborough",
-          "zipcode": "92998-3874",
+          "zipCode": "92998-3874",
         }
       ]
     },
@@ -231,7 +231,7 @@ export const APIresponse = {
           "street": "Kulas Light",
           "suite": "Apt. 556",
           "city": "Gwenborough",
-          "zipcode": "92998-3874",
+          "zipCode": "92998-3874",
         }
       ]
     },
@@ -252,7 +252,7 @@ export const APIresponse = {
           "street": "Kulas Light",
           "suite": "Apt. 556",
           "city": "Gwenborough",
-          "zipcode": "92998-3874",
+          "zipCode": "92998-3874",
         }
       ]
 

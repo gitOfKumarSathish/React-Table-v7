@@ -1,71 +1,18 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import MaterialReactTable, {
     MRT_RowSelectionState,
-    type MRT_ColumnDef,
     type MRT_Row,
 } from 'material-react-table';
 import { APIresponse } from '../assets/sample';
 import { Box, Typography } from '@mui/material';
+import { Columns } from '../components/Table/Columns';
 
 const Example = () => {
+    // prepare Columns Title
+    const columnsList = Object.keys(APIresponse.data[0]).filter(col => col !== 'additionalInfo');
+    const columns = useMemo(() => Columns(columnsList), []);
 
-    const columns = useMemo<MRT_ColumnDef[]>(
-        () => [
-            {
-                header: 'Name',
-                accessorKey: 'name',
-            },
-            {
-                header: 'id',
-                accessorKey: 'id',
-            },
-            {
-                header: 'Email',
-                accessorKey: 'email',
-                enableSorting: false,
-            },
-            {
-                header: 'phone',
-                accessorKey: 'phone',
-                enableSorting: false,
-            },
-            {
-                header: 'website',
-                accessorKey: 'website',
-            },
-            {
-                header: 'color',
-                accessorKey: 'color',
-                enableSorting: false,
-                Cell: ({ cell }) => (
-                    <p
-                        style={{
-                            'backgroundColor': cell.getValue(),
-                        }}
-                        className='colorBox'
-                    >
-                        &nbsp;
-                    </p>)
-                // enableGrouping: false, //do not let this column be grouped
-            },
-            {
-                header: 'image',
-                accessorKey: 'image',
-                Cell: ({ cell }) => (
-                    <img
-                        src={cell.getValue()}
-                        width={35}
-                    />
-                )
-                // Cell: ImageCell
-                // enableGrouping: false, //do not let this column be grouped
-            },
-
-
-
-        ], []);
-
-
+    // set Data 
     const [data, setData] = useState(() => APIresponse.data);
 
     //optionally, you can manage the row selection state yourself
@@ -75,6 +22,14 @@ const Example = () => {
         //do something when the row selection changes...
         console.info({ rowSelection });
     }, [rowSelection]);
+
+    console.log('columns: ', columns);
+
+
+
+
+    // Alternative way using destructuring assignment:
+    // const { columnVisibility } = JSON.parse(localStorage.getItem('columnState'));
 
     return (
         <MaterialReactTable
@@ -94,7 +49,7 @@ const Example = () => {
                         <Typography><b>website:</b> {row.original.website}</Typography>
                         <Typography><b>City:</b> {row.original.additionalInfo[0].city}</Typography>
                         <Typography><b>street:</b> {row.original.additionalInfo[0].street}</Typography>
-                        <Typography><b>zipcode:</b> {row.original.additionalInfo[0].zipcode}</Typography>
+                        <Typography><b>zipCode:</b> {row.original.additionalInfo[0].zipCode}</Typography>
                     </Box>)
             )}
 
@@ -102,31 +57,37 @@ const Example = () => {
 
 
             enableColumnResizing
+
             enableRowOrdering
-            // // enableGrouping
+            enableColumnOrdering
+
             enableStickyHeader
             enableStickyFooter
 
             enableRowDragging
 
-            enableColumnOrdering
-
+            enableGlobalFilterModes
             enableColumnFilterModes
             muiTableHeadCellFilterTextFieldProps={{
                 sx: { m: '0.5rem 0', width: '100%' },
                 variant: 'outlined',
             }}
 
+            positionExpandColumn="first"
+
+            enableDensityToggle={false}
+            // memoMode="cells"
+
             initialState={{
                 density: 'compact',
-                columnVisibility: { name: true },
+                // columnVisibility: { JSON.parse(localStorage.getItem('columnState'))[0] },
                 // expanded: true, //expand all groups by default
                 // grouping: ['id'], //an array of columns to group by by default (can be multiple)
                 // pagination: { pageIndex: 0, pageSize: 20 },
                 // sorting: [{ id: 'id', desc: false }], //sort by state by default
             }}
-            // muiToolbarAlertBannerChipProps={{ color: 'primary' }}
-            // muiTableContainerProps={{ sx: { maxHeight: 700 } }}
+            muiToolbarAlertBannerChipProps={{ color: 'primary' }}
+            muiTableContainerProps={{ sx: { maxHeight: 400 } }}
             muiTableBodyRowProps={({ row }) => ({
                 onClick: row.getToggleSelectedHandler(),
                 sx: { cursor: 'pointer' },
@@ -134,6 +95,7 @@ const Example = () => {
             getRowId={(row) => row?.name} //give each row a more useful id
             onRowSelectionChange={setRowSelection} //connect internal row selection state to your own
             state={{ rowSelection }}
+
             enableMultiRowSelection={APIresponse.selectionType === 'multi'}
             muiTableBodyRowDragHandleProps={({ table }) => ({
                 onDragEnd: () => {
@@ -148,19 +110,41 @@ const Example = () => {
                     }
                 },
             })}
+            enablePagination={false}
+            enablePinning
+            // muiTableHeadCellColumnActionsButtonProps={row => console.log('row', (row.table.getAllFlatColumns()).map(x => x.getIsVisible()))}
+            muiTableHeadCellColumnActionsButtonProps={row => storeColumns(row.table.getAllFlatColumns())}
+        // displayColumnDefOptions={{ 'mrt-row-actions': { size: 300 } }}
+        // renderTopToolbarCustomActions={() => (
+        //     <Typography component="span" variant="h4">
+        //         Memoized Cells
+        //     </Typography>
+        // )}
 
 
-            positionExpandColumn="first"
         />
     );
+    function storeColumns(columnList) {
+        // const check = columnList.map((x, i) => x.getIsVisible());
+
+        const falseIndices = columnList.reduce((acc, x, i) => {
+            if (!x.getIsVisible()) {
+                acc.push(i);
+            }
+            return acc;
+        }, []);
+
+        const finalArray = falseIndices.map((x) => ({
+            [columnList[x].id]: false,
+        }));
+
+        localStorage.setItem('columnState', JSON.stringify(finalArray));
+
+        console.log('finalArray', finalArray);
+
+    }
 };
 
-// "company name": "Romaguera-Crona",
-//     "catchPhrase": "Multi-layered client-server neural-net",
-//         "bs": "harness real-time e-markets",
-//             "street": "Kulas Light",
-//                 "suite": "Apt. 556",
-//                     "city": "Gwenborough",
-//                         "zipcode": "92998-3874",
-
 export default React.memo(Example);
+
+

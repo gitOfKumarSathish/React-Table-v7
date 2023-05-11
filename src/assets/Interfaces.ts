@@ -56,9 +56,9 @@ interface Info {
 }
 
 type ColumnType = {
-    Header: string;
-    accessor: string;
-    disableSortBy?: boolean;
+    header: string;
+    accessorKey: string;
+    enableSorting?: boolean;
     Cell?: any;
     className?: string;
 };
