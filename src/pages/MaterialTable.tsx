@@ -12,11 +12,11 @@ import InfoIcon from '@mui/icons-material/Info';
 
 const Example = () => {
     // prepare Columns Title
+    const [data, setData] = useState(() => APIresponse.data);
     const columnsList = Object.keys(APIresponse.data[0]).filter(col => col !== 'additionalInfo');
-    const columns = useMemo(() => Columns(columnsList), []);
+    const columns = useMemo(() => Columns(columnsList, data), []);
 
     // set Data 
-    const [data, setData] = useState(() => APIresponse.data);
 
     //optionally, you can manage the row selection state yourself
     const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
@@ -34,11 +34,25 @@ const Example = () => {
     // Alternative way using destructuring assignment:
     // const { columnVisibility } = JSON.parse(localStorage.getItem('columnState'));
 
+    // function storeColumns() {
+    //     const columns = table.getAllFlatColumns();
+    //     const visibilityState = {};
+    //     columns.forEach((column) => {
+    //         visibilityState[column.id] = column.getIsVisible();
+    //     });
+    //     console.log('visibilityState', visibilityState);
+    //     localStorage.setItem('columnVisibility', JSON.stringify(visibilityState));
+    // }
     return (
         <MaterialReactTable
             columns={columns}
             data={data}
-
+            isMultiSortEvent={() => true}
+            // muiTableHeadCellColumnActionsButtonProps={{
+            //     onClick: storeColumns,
+            // }}
+            // }}
+            // }}
             renderDetailPanel={({ row }) => (
                 (row.original?.additionalInfo[0] &&
                     <Box
@@ -133,8 +147,8 @@ const Example = () => {
                     </Tooltip>
                 </Box>
             )}
-            // muiTableHeadCellColumnActionsButtonProps={row => console.log('row', (row.table.getAllFlatColumns()).map(x => x.getIsVisible()))}
-            muiTableHeadCellColumnActionsButtonProps={row => storeColumns(row.table.getAllFlatColumns())}
+        // muiTableHeadCellColumnActionsButtonProps={row => console.log('row', (row.table.getAllFlatColumns()).map(x => x.getIsVisible()))}
+        // muiTableHeadCellColumnActionsButtonProps={row => storeColumns(row.table.getAllFlatColumns())}
         // displayColumnDefOptions={{ 'mrt-row-actions': { size: 300 } }}
         // renderTopToolbarCustomActions={() => (
         //     <Typography component="span" variant="h4">
@@ -145,15 +159,16 @@ const Example = () => {
 
         />
     );
-    function storeColumns(columnList: any[]) {
-        const falseIndices = columnList
-            .filter((column) => !column.getIsVisible())
-            .map((column) => ({ [column.id]: false }));
+    // function storeColumns(columnList: any[]) {
+    //     const falseIndices = columnList
+    //         .filter((column) => !column.getIsVisible())
+    //         .map((column) => ({ [column.id]: false }));
 
-        localStorage.setItem('columnState', JSON.stringify(falseIndices));
+    //     localStorage.setItem('columnState', JSON.stringify(falseIndices));
 
-        console.log('falseIndices', falseIndices);
-    }
+    //     console.log('falseIndices', falseIndices);
+
+    // }
 
 };
 
