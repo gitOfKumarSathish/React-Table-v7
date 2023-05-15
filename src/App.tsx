@@ -3,7 +3,11 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import axios from 'axios';
 import DataTable from './components/Table/ApiData';
 import './App.css';
-import Example from './pages/MaterialTable';
+import MaterialTable from './pages/MaterialTable';
+import ServerRendering from './pages/ServerRendering';
+import ExampleWithReactQueryProvider from './pages/ServerRendering';
+import ClientSideVirtualTable from './pages/ClientSideVirtualTable';
+
 
 export const ThemeContext = createContext({
   userName: '',
@@ -29,7 +33,9 @@ function App() {
     <ThemeContext.Provider value={value}>
       <QueryClientProvider client={queryClient}>
         {/* <DataTable /> */}
-        <Example />
+        {/* <MaterialTable /> */}
+        {/* <ExampleWithReactQueryProvider /> */}
+        <ClientSideVirtualTable />
       </QueryClientProvider>
     </ThemeContext.Provider>
   );

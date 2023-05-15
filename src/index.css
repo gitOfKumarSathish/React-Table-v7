@@ -41,6 +41,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  scroll-behavior: smooth;
 }
 
 h1 {
@@ -84,6 +85,10 @@ button:focus-visible {
   }
 }
 
+table {
+
+  scroll-behavior: smooth;
+}
 
 .resizer {
   display: inline-block;

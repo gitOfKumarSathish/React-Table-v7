@@ -10,7 +10,7 @@ import { Box, IconButton, Tooltip, Typography, Zoom } from '@mui/material';
 import { Columns } from '../components/Table/Columns';
 import InfoIcon from '@mui/icons-material/Info';
 
-const Example = () => {
+const MaterialTable = () => {
     // prepare Columns Title
     const [data, setData] = useState(() => APIresponse.data);
     const columnsList = Object.keys(APIresponse.data[0]).filter(col => col !== 'additionalInfo');
@@ -172,6 +172,6 @@ const Example = () => {
 
 };
 
-export default React.memo(Example);
+export default React.memo(MaterialTable);
 
 
