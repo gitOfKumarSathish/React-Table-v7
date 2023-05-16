@@ -12,13 +12,18 @@ import MaterialReactTable, {
     type MRT_ColumnFiltersState,
     type MRT_SortingState,
     type MRT_Virtualizer,
+    MRT_ShowHideColumnsButton,
+    MRT_ToggleFiltersButton,
 } from 'material-react-table';
-import { Typography } from '@mui/material';
+import { Box, IconButton, Tooltip, Typography, Zoom } from '@mui/material';
 import {
     QueryClient,
     QueryClientProvider,
     useInfiniteQuery,
 } from '@tanstack/react-query';
+import InfoIcon from '@mui/icons-material/Info';
+import { InfintieColumns } from '../components/Table/InfintieColumns';
+
 
 type UserApiResponse = {
     users: any;
@@ -48,7 +53,7 @@ const InfinteScroll = () => {
     const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(
         [],
     );
-    const [columns, setColumns] = useState<MRT_ColumnDef<User>[]>([]);
+    // const [columns, setColumns] = useState<MRT_ColumnDef<User>[]>([]);
     const [globalFilter, setGlobalFilter] = useState<string>();
     const [sorting, setSorting] = useState<MRT_SortingState>([]);
 
@@ -78,27 +83,18 @@ const InfinteScroll = () => {
         () => {
             return data?.pages.flatMap((page) => page.users) ?? [];
         },
-
         [data],
 
     );
 
-    useEffect(() => {
-        const rowData: any = data?.pages[0].users;
-        const columnExtractor = rowData?.[0];
-        const columnLength = Object.keys(columnExtractor || {}).length;
-        if (!isLoading && columnLength > 0) {
-            const columnKeys = Object.keys(columnExtractor).filter(
-                (key) => key !== 'hair' && key !== 'address' && key !== 'bank' && key !== 'company'
-            );
-            const newColumns: any = columnKeys.map((key) => ({
-                accessorKey: key,
-                header: key,
-                columnFilterModeOptions: ['fuzzy', 'contains', 'startsWith'],
-            }));
-            setColumns(newColumns);
+    const columns: MRT_ColumnDef<any>[] = useMemo(() => {
+        if (data) {
+            return InfintieColumns(data?.pages[0].users, isLoading);
         }
-    }, [isLoading, data, setColumns]);
+        return [];
+    }, [data, isLoading]);
+
+    console.log('columns', columns);
 
     const totalDBRowCount = data?.pages?.[0].total ?? 0;
     const totalFetched = flatData.length;
@@ -151,6 +147,17 @@ const InfinteScroll = () => {
             data={flatData}
             enablePagination={false}
             enableRowNumbers
+
+
+
+            displayColumnDefOptions={{
+                'mrt-row-numbers': {
+                    enableOrdering: true,
+                    enablePinning: true,
+                    enableColumnActions: true,
+                },
+            }}
+
             enableRowVirtualization //optional, but recommended if it is likely going to be more than 100 rows
             // manualFiltering
             // manualSorting
@@ -187,7 +194,7 @@ const InfinteScroll = () => {
                 density: 'compact',
                 rowSelection
             }}
-
+            enableColumnResizing
             enableGlobalFilterModes
             enableFilterMatchHighlighting
             enableColumnFilterModes
@@ -206,6 +213,28 @@ const InfinteScroll = () => {
 
             enableMultiRowSelection={true}
             enableRowSelection
+            enablePinning
+            muiTableBodyRowProps={({ row }) => ({
+                onClick: row.getToggleSelectedHandler(),
+                sx: { cursor: 'pointer' },
+            })}
+            renderToolbarInternalActions={({ table }) => (
+                <Box>
+                    {/* add custom button to print table  */}
+
+
+                    {/* along-side built-in buttons in whatever order you want them */}
+                    <MRT_ToggleFiltersButton table={table} />
+                    {/* <MRT_ToggleDensePaddingButton table={table} /> */}
+                    {/* <MRT_FullScreenToggleButton table={table} /> */}
+                    <MRT_ShowHideColumnsButton table={table} />
+                    <Tooltip TransitionComponent={Zoom} title="To perform multiple sorting, please press and hold down the Shift key.">
+                        <IconButton >
+                            <InfoIcon />
+                        </IconButton>
+                    </Tooltip>
+                </Box>
+            )}
         />
     );
 };
