@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
 
-function InfiniteRowExpand({ row }) {
+function InfiniteRowExpand({ row }: any) {
 
 
     return (

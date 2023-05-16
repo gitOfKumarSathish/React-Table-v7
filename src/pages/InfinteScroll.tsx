@@ -46,7 +46,7 @@ type User = {
 
 const fetchSize = 20;
 
-const InfinteScroll = () => {
+const InfiniteScroll = () => {
     const tableContainerRef = useRef<HTMLDivElement>(null); //we can get access to the underlying TableContainer element and react to its scroll events
     const rowVirtualizerInstanceRef =
         useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null); //we can get access to the underlying Virtualizer instance and call its scrollToIndex method
@@ -183,7 +183,7 @@ const InfinteScroll = () => {
                     // manualSorting
                     muiTableContainerProps={{
                         ref: tableContainerRef, //get access to the table container element
-                        sx: { maxHeight: '400px' }, //give the table a max height
+                        sx: { maxHeight: '500px' }, //give the table a max height
                         onScroll: (
                             event: UIEvent<HTMLDivElement>, //add an event listener to the table container element
                         ) => fetchMoreOnBottomReached(event.target as HTMLDivElement),
@@ -238,16 +238,12 @@ const InfinteScroll = () => {
                         onClick: row.getToggleSelectedHandler(),
                         sx: { cursor: 'pointer' },
                     })}
-                    renderToolbarInternalActions={({ table }) => (
+                    renderToolbarInternalActions={({ table }): any => (
                         <Box>
-                            {/* add custom button to print table  */}
-
-
-
+                            {/* along-side built-in buttons in whatever order you want them */}
                             <MRT_ToggleFiltersButton table={table} />
                             {/* <MRT_ToggleDensePaddingButton table={table} /> */}
                             {/* <MRT_FullScreenToggleButton table={table} /> */}
-                            {console.log('table', table.getAllColumns())}
                             <MRT_ShowHideColumnsButton table={table} />
                             <Tooltip TransitionComponent={Zoom} title="To perform multiple sorting, please press and hold down the Shift key.">
                                 <IconButton >
@@ -269,7 +265,7 @@ const queryClient = new QueryClient();
 
 const ExampleWithReactQueryProvider = () => (
     <QueryClientProvider client={queryClient}>
-        <InfinteScroll />
+        <InfiniteScroll />
     </QueryClientProvider>
 );
 
