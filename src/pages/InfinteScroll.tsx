@@ -89,7 +89,7 @@ const InfinteScroll = () => {
 
     const columns: MRT_ColumnDef<any>[] = useMemo(() => {
         if (data) {
-            return InfintieColumns(data?.pages[0].users, isLoading);
+            return InfintieColumns(data?.pages[0].users?.[0]);
         }
         return [];
     }, [data, isLoading]);
@@ -142,100 +142,122 @@ const InfinteScroll = () => {
     }, [rowSelection]);
 
     return (
-        <MaterialReactTable
-            columns={columns}
-            data={flatData}
-            enablePagination={false}
-            enableRowNumbers
+        <>
+            <section> {!isLoading &&
+                <MaterialReactTable
+                    columns={columns}
+                    data={flatData}
+                    enablePagination={false}
+                    enableRowNumbers
+                    enableHiding={true}
+                    initialState={{
+                        columnVisibility: { description: false }
+                    }}
 
+                    displayColumnDefOptions={{
+                        'mrt-row-actions': {
+                            size: 350, //set custom width
+                            muiTableHeadCellProps: {
+                                align: 'center', //change head cell props
+                            },
+                        },
+                        'mrt-row-numbers': {
+                            enableColumnOrdering: true, //turn on some features that are usually off
+                            enableResizing: true,
+                            muiTableHeadCellProps: {
+                                sx: {
+                                    fontSize: '1.2rem',
+                                },
+                            },
+                        },
+                        'mrt-row-select': {
+                            enableColumnActions: true,
+                            enableHiding: true,
+                            size: 100,
+                        },
+                    }}
 
-
-            displayColumnDefOptions={{
-                'mrt-row-numbers': {
-                    enableOrdering: true,
-                    enablePinning: true,
-                    enableColumnActions: true,
-                },
-            }}
-
-            enableRowVirtualization //optional, but recommended if it is likely going to be more than 100 rows
-            // manualFiltering
-            // manualSorting
-            muiTableContainerProps={{
-                ref: tableContainerRef, //get access to the table container element
-                sx: { maxHeight: '400px' }, //give the table a max height
-                onScroll: (
-                    event: UIEvent<HTMLDivElement>, //add an event listener to the table container element
-                ) => fetchMoreOnBottomReached(event.target as HTMLDivElement),
-            }}
-            muiToolbarAlertBannerProps={
-                isError
-                    ? {
-                        color: 'error',
-                        children: 'Error loading data',
+                    enableRowVirtualization //optional, but recommended if it is likely going to be more than 100 rows
+                    // manualFiltering
+                    // manualSorting
+                    muiTableContainerProps={{
+                        ref: tableContainerRef, //get access to the table container element
+                        sx: { maxHeight: '400px' }, //give the table a max height
+                        onScroll: (
+                            event: UIEvent<HTMLDivElement>, //add an event listener to the table container element
+                        ) => fetchMoreOnBottomReached(event.target as HTMLDivElement),
+                    }}
+                    muiToolbarAlertBannerProps={
+                        isError
+                            ? {
+                                color: 'error',
+                                children: 'Error loading data',
+                            }
+                            : undefined
                     }
-                    : undefined
-            }
-            onColumnFiltersChange={setColumnFilters}
-            onGlobalFilterChange={setGlobalFilter}
-            onSortingChange={setSorting}
-            renderBottomToolbarCustomActions={() => (
-                <Typography>
-                    Fetched {totalFetched} of {totalDBRowCount} total rows.
-                </Typography>
-            )}
-            state={{
-                columnFilters,
-                globalFilter,
-                isLoading,
-                showAlertBanner: isError,
-                showProgressBars: isFetching,
-                sorting,
-                density: 'compact',
-                rowSelection
-            }}
-            enableColumnResizing
-            enableGlobalFilterModes
-            enableFilterMatchHighlighting
-            enableColumnFilterModes
-            muiTableHeadCellFilterTextFieldProps={{
-                sx: { m: '0.5rem 0', width: '100%' },
-                variant: 'outlined',
-            }}
+                    onColumnFiltersChange={setColumnFilters}
+                    onGlobalFilterChange={setGlobalFilter}
+                    onSortingChange={setSorting}
+                    renderBottomToolbarCustomActions={() => (
+                        <Typography>
+                            Fetched {totalFetched} of {totalDBRowCount} total rows.
+                        </Typography>
+                    )}
+                    state={{
+                        columnFilters,
+                        globalFilter,
+                        isLoading,
+                        showAlertBanner: isError,
+                        showProgressBars: isFetching,
+                        sorting,
+                        density: 'compact',
+                        rowSelection
+                    }}
+                    enableColumnResizing
+                    enableGlobalFilterModes
+                    enableFilterMatchHighlighting
+                    enableColumnFilterModes
+                    muiTableHeadCellFilterTextFieldProps={{
+                        sx: { m: '0.5rem 0', width: '100%' },
+                        variant: 'outlined',
+                    }}
 
-            rowVirtualizerInstanceRef={rowVirtualizerInstanceRef} //get access to the virtualizer instance
-            rowVirtualizerProps={{ overscan: 0 }}
+                    rowVirtualizerInstanceRef={rowVirtualizerInstanceRef} //get access to the virtualizer instance
+                    rowVirtualizerProps={{ overscan: 0 }}
 
-            enableDensityToggle={false}
+                    enableDensityToggle={false}
 
-            getRowId={(row) => row?.name} //give each row a more useful id
-            onRowSelectionChange={setRowSelection} //connect internal row selection state to your own
+                    getRowId={(row) => row?.name} //give each row a more useful id
+                    onRowSelectionChange={setRowSelection} //connect internal row selection state to your own
 
-            enableMultiRowSelection={true}
-            enableRowSelection
-            enablePinning
-            muiTableBodyRowProps={({ row }) => ({
-                onClick: row.getToggleSelectedHandler(),
-                sx: { cursor: 'pointer' },
-            })}
-            renderToolbarInternalActions={({ table }) => (
-                <Box>
-                    {/* add custom button to print table  */}
+                    enableMultiRowSelection={true}
+                    enableRowSelection
+                    enablePinning
+                    muiTableBodyRowProps={({ row }) => ({
+                        onClick: row.getToggleSelectedHandler(),
+                        sx: { cursor: 'pointer' },
+                    })}
+                    renderToolbarInternalActions={({ table }) => (
+                        <Box>
+                            {/* add custom button to print table  */}
 
 
-                    {/* along-side built-in buttons in whatever order you want them */}
-                    <MRT_ToggleFiltersButton table={table} />
-                    {/* <MRT_ToggleDensePaddingButton table={table} /> */}
-                    {/* <MRT_FullScreenToggleButton table={table} /> */}
-                    <MRT_ShowHideColumnsButton table={table} />
-                    <Tooltip TransitionComponent={Zoom} title="To perform multiple sorting, please press and hold down the Shift key.">
-                        <IconButton >
-                            <InfoIcon />
-                        </IconButton>
-                    </Tooltip>
-                </Box>
-            )}
-        />
+
+                            <MRT_ToggleFiltersButton table={table} />
+                            {/* <MRT_ToggleDensePaddingButton table={table} /> */}
+                            {/* <MRT_FullScreenToggleButton table={table} /> */}
+                            {console.log('table', table.getAllColumns())}
+                            <MRT_ShowHideColumnsButton table={table} />
+                            <Tooltip TransitionComponent={Zoom} title="To perform multiple sorting, please press and hold down the Shift key.">
+                                <IconButton >
+                                    <InfoIcon />
+                                </IconButton>
+                            </Tooltip>
+                        </Box>
+                    )}
+                />
+            }</section>
+        </>
     );
 };
 

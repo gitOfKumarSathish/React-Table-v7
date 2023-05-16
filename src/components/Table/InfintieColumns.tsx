@@ -11,22 +11,30 @@ interface IColumn {
 }
 
 
-export function InfintieColumns(data: any[], isLoading: boolean): ColumnType[] {
-    // useEffect(() => {
-    // const rowData: any = data?.pages[0].users;
-    const columnExtractor = data?.[0];
-    const columnLength = Object.keys(columnExtractor).length;
-    if (columnLength > 0) {
-        const columnKeys = Object.keys(columnExtractor).filter(
-            (key) => key !== 'hair' && key !== 'address' && key !== 'bank' && key !== 'company'
-        );
-        const newColumns: any = columnKeys.map((key) => ({
-            accessorKey: key,
-            header: key,
-            columnFilterModeOptions: ['fuzzy', 'contains', 'startsWith'],
-        }));
-        console.log('newColumns', newColumns);
-        return (newColumns);
-    }
-    // }, [isLoading, data]);
+export function InfintieColumns(data: any[]): ColumnType[] {
+    const columnKeys = Object.keys(data).filter(
+        (key) => key !== 'hair' && key !== 'address' && key !== 'bank' && key !== 'company'
+    );
+    return columnKeys.map((columnName: string) => {
+        let column: IColumn = {
+            header: columnName,
+            accessorKey: columnName,
+        };
+        if (columnName === "image") {
+            column.Cell = ({ cell }: { cell: any; }) => <img src={cell.getValue()} width={35} />;
+        }
+        else if (columnName === "eyeColor") {
+            column.Cell = ({ cell }: { cell: any; }) => (
+                <p
+                    style={{
+                        backgroundColor: cell.getValue(),
+                    }}
+                    className='colorBox'
+                >
+                    &nbsp;
+                </p>);
+        }
+        return column;
+    });
+
 }
