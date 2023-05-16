@@ -4,9 +4,10 @@ import axios from 'axios';
 import DataTable from './components/Table/ApiData';
 import './App.css';
 import MaterialTable from './pages/MaterialTable';
-import ServerRendering from './pages/ServerRendering';
-import ExampleWithReactQueryProvider from './pages/ServerRendering';
+import ServerRendering from './assets/ServerRendering';
+import ExampleWithReactQueryProvider from './pages/InfinteScroll';
 import ClientSideVirtualTable from './pages/ClientSideVirtualTable';
+import InfinteScroll from './pages/InfinteScroll';
 
 
 export const ThemeContext = createContext({
@@ -35,7 +36,9 @@ function App() {
         {/* <DataTable /> */}
         {/* <MaterialTable /> */}
         {/* <ExampleWithReactQueryProvider /> */}
-        <ClientSideVirtualTable />
+        {/* <ClientSideVirtualTable /> */}
+        {/* <InfinteScroll /> */}
+        {<ExampleWithReactQueryProvider />}
       </QueryClientProvider>
     </ThemeContext.Provider>
   );

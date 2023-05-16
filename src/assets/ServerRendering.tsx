@@ -19,7 +19,7 @@ import {
     useQuery,
 } from '@tanstack/react-query';
 import { Columns } from '../components/Table/Columns';
-import { APIresponse } from '../assets/sample';
+import { APIresponse } from './sample';
 import DetailPanel from '../components/Table/DetailsRowPanel';
 
 type UserApiResponse = {

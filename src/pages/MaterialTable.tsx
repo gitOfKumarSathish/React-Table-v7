@@ -92,6 +92,7 @@ const MaterialTable = () => {
             }}
 
             positionExpandColumn="first"
+            enablePinning
 
             enableDensityToggle={false}
             // memoMode="cells"
