@@ -23,6 +23,7 @@ import {
 } from '@tanstack/react-query';
 import InfoIcon from '@mui/icons-material/Info';
 import { InfintieColumns } from '../components/Table/InfintieColumns';
+import InfiniteRowExpand from '../components/Table/InfiniteRowExpand';
 
 
 type UserApiResponse = {
@@ -74,7 +75,7 @@ const InfinteScroll = () => {
                 const json = (await response.json()) as UserApiResponse;
                 return json;
             },
-            getNextPageParam: (_lastGroup, groups) => { console.log('groups', groups); return groups.length; },
+            getNextPageParam: (_lastGroup, groups) => groups.length,
             keepPreviousData: true,
             refetchOnWindowFocus: false,
         });
@@ -255,6 +256,9 @@ const InfinteScroll = () => {
                             </Tooltip>
                         </Box>
                     )}
+
+                    renderDetailPanel={({ row }) => (<InfiniteRowExpand row={row} />)}
+                    enableExpandAll={false}
                 />
             }</section>
         </>
