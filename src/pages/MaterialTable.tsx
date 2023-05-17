@@ -130,7 +130,6 @@ const MaterialTable = () => {
                 },
             })}
             enablePagination={false}
-            enablePinning
             renderToolbarInternalActions={({ table }) => (
                 <Box>
                     {/* add custom button to print table  */}

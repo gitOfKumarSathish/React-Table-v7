@@ -17,15 +17,11 @@ import MaterialReactTable, {
 
 } from 'material-react-table';
 import { Box, IconButton, Tooltip, Typography, Zoom } from '@mui/material';
-import { useInfiniteQuery } from '@tanstack/react-query';
 import InfoIcon from '@mui/icons-material/Info';
-import axios from 'axios';
 
 import { InfintieColumns } from '../components/Table/InfintieColumns';
 import InfiniteRowExpand from '../components/Table/InfiniteRowExpand';
-import { UserApiResponse } from '../assets/Interfaces';
-
-const fetchSize = 25;
+import { APIDataFetching } from '../components/Table/InfiniteAPI';
 
 const InfiniteScroll = () => {
 
@@ -40,31 +36,12 @@ const InfiniteScroll = () => {
     const rowVirtualizerInstanceRef = useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null); //we can get access to the underlying Virtualizer instance and call its scrollToIndex method
 
     // Query Handling  
-    const { data, fetchNextPage, isError, isFetching, isLoading } = useInfiniteQuery<UserApiResponse>({
-        queryKey: ['table-data', columnFilters, globalFilter, sorting],
-        queryFn: async ({ pageParam = 0 }) => {
-            const baseUrl = 'users';
-            const params = new URLSearchParams();
-
-            params.set('start', `${pageParam * fetchSize}`);
-            params.set('limit', `${fetchSize}`);
-            params.set('filters', JSON.stringify(columnFilters ?? []));
-            params.set('globalFilter', globalFilter ?? '');
-            params.set('sorting', JSON.stringify(sorting ?? []));
-
-            const url = `${baseUrl}?${params.toString()}`;
-            const response = await axios.get(url);
-            return response.data as UserApiResponse;
-        },
-        getNextPageParam: (_lastGroup, groups) => groups.length,
-        keepPreviousData: true,
-        refetchOnWindowFocus: false,
-    });
+    const { data, fetchNextPage, isError, isFetching, isLoading } = APIDataFetching(columnFilters, globalFilter, sorting);
 
     // Preparing Table Data
     let flatData = useMemo(() => {
         if (!data) return [];
-        const users = data.pages.flatMap((page) => page.users);
+        const users = data.pages.flatMap((page: { users: any; }) => page.users);
         setFlatRowData(users);
         return users;
     }, [data]);
@@ -246,4 +223,6 @@ const InfiniteScroll = () => {
 };
 
 export default memo(InfiniteScroll);
+
+
 
