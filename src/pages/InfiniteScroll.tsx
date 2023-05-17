@@ -86,7 +86,6 @@ const InfiniteScroll = () => {
             console.error(error);
         }
     }, [sorting, columnFilters, globalFilter]);
-    console.log('tableContainerRef', tableContainerRef.current?.scrollTo(0, 0));
 
     //a check on mount to see if the table is already scrolled to the bottom and immediately needs to fetch more data
     useEffect(() => {
@@ -170,15 +169,7 @@ const InfiniteScroll = () => {
                         sx: { cursor: 'pointer' },
                     })}
 
-                    renderTopToolbarCustomActions={() => ( // Add custom Info button 
-                        <Box>
-                            <Tooltip TransitionComponent={Zoom} title="To perform multiple sorting, please press and hold down the Shift key.">
-                                <IconButton >
-                                    <InfoIcon />
-                                </IconButton>
-                            </Tooltip>
-                        </Box>
-                    )}
+                    renderTopToolbarCustomActions={() => (CustomInfoButton())} // Add custom Info button 
 
                     state={{ // State of the table
                         columnFilters,
@@ -228,4 +219,14 @@ const InfiniteScroll = () => {
 export default memo(InfiniteScroll);
 
 
+
+function CustomInfoButton() {
+    return <Box>
+        <Tooltip TransitionComponent={Zoom} title="To perform multiple sorting, please press and hold down the Shift key.">
+            <IconButton>
+                <InfoIcon />
+            </IconButton>
+        </Tooltip>
+    </Box>;
+}
 

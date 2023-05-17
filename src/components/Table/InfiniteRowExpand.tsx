@@ -1,18 +1,19 @@
 import { Box, Typography } from '@mui/material';
+import { memo } from 'react';
 
 function InfiniteRowExpand({ row }: any) {
-
+    const { cardExpire, cardNumber, cardType, currency } = row.original.bank;
 
     return (
         (row.original &&
             <Box className="row-expand" >
-                <Typography><b>cardExpire:</b> {row.original.bank.cardExpire}</Typography>
-                <Typography><b>Card Number:</b> {row.original.bank.cardNumber}</Typography>
-                <Typography><b>Card Type:</b> {row.original.bank.cardType}</Typography>
-                <Typography><b>currency:</b> {row.original.bank.currency}</Typography>
+                <Typography><b>cardExpire:</b> {cardExpire}</Typography>
+                <Typography><b>Card Number:</b> {cardNumber}</Typography>
+                <Typography><b>Card Type:</b> {cardType}</Typography>
+                <Typography><b>currency:</b> {currency}</Typography>
             </Box>)
     );
 }
 
 
-export default InfiniteRowExpand;
+export default memo(InfiniteRowExpand);
