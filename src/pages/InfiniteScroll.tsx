@@ -102,7 +102,8 @@ const InfiniteScroll = () => {
     useEffect(() => {
         //scroll to the top of the table when the sorting changes
         try {
-            rowVirtualizerInstanceRef.current?.scrollToIndex?.(0);
+            // rowVirtualizerInstanceRef.current?.scrollToIndex?.(0);
+            tableContainerRef.current?.scrollTo(0, 0);
         } catch (error) {
             console.error(error);
         }
