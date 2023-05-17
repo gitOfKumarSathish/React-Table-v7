@@ -16,7 +16,7 @@ import MaterialReactTable, {
     MRT_Row,
 
 } from 'material-react-table';
-import { Box, IconButton, Tooltip, Typography, Zoom } from '@mui/material';
+import { Box, IconButton, Tooltip, Typography, Zoom, CircularProgress } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 
 import { InfintieColumns } from '../components/Table/InfintieColumns';
@@ -97,7 +97,7 @@ const InfiniteScroll = () => {
     //     //do something when the row selection changes...
     //     // console.info({ rowSelection });
     // }, [rowSelection]);
-
+    if (isLoading) return <div><CircularProgress /> <h3>  Loading...</h3></div>;
     return (
         <>
             <section> {!isLoading &&

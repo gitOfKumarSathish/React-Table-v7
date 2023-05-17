@@ -12,7 +12,7 @@ interface IColumn {
 
 export function InfintieColumns(data: any[]): ColumnType[] {
     const columnKeys = Object.keys(data).filter(
-        (key) => key !== 'hair' && key !== 'address' && key !== 'bank' && key !== 'company'
+        key => !["hair", "address", "bank", "company"].includes(key)
     );
     return columnKeys.map((columnName: string) => {
         let column: IColumn = {
