@@ -1,5 +1,6 @@
 import {
     UIEvent,
+    memo,
     useCallback,
     useEffect,
     useMemo,
@@ -16,87 +17,64 @@ import MaterialReactTable, {
 
 } from 'material-react-table';
 import { Box, IconButton, Tooltip, Typography, Zoom } from '@mui/material';
-import {
-    useInfiniteQuery,
-} from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import InfoIcon from '@mui/icons-material/Info';
-import { InfintieColumns } from '../components/Table/InfintieColumns';
-import InfiniteRowExpand from '../components/Table/InfiniteRowExpand';
 import axios from 'axios';
 
-
-type UserApiResponse = {
-    users: any;
-    data: {
-        pages?: [{
-            users?: Array<any>;
-            total?: number;
-        }];
-    };
-};
-
-type User = {
-    firstName: string;
-    lastName: string;
-    address: string;
-    state: string;
-    phoneNumber: string;
-};
+import { InfintieColumns } from '../components/Table/InfintieColumns';
+import InfiniteRowExpand from '../components/Table/InfiniteRowExpand';
+import { UserApiResponse } from '../assets/Interfaces';
 
 const fetchSize = 25;
 
 const InfiniteScroll = () => {
-    const tableContainerRef = useRef<HTMLDivElement>(null); //we can get access to the underlying TableContainer element and react to its scroll events
-    const rowVirtualizerInstanceRef =
-        useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null); //we can get access to the underlying Virtualizer instance and call its scrollToIndex method
 
     const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
-    // const [columns, setColumns] = useState<MRT_ColumnDef<User>[]>([]);
     const [globalFilter, setGlobalFilter] = useState<string>();
     const [sorting, setSorting] = useState<MRT_SortingState>([]);
-
     const [flatRowData, setFlatRowData] = useState<any>([]);
+    //optionally, you can manage the row selection state yourself
+    const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
 
-    const { data, fetchNextPage, isError, isFetching, isLoading } =
-        useInfiniteQuery<UserApiResponse>({
-            queryKey: ['table-data', columnFilters, globalFilter, sorting],
-            queryFn: async ({ pageParam = 0 }) => {
-                const baseUrl = 'users';
-                const params = new URLSearchParams();
+    const tableContainerRef = useRef<HTMLDivElement>(null); //we can get access to the underlying TableContainer element and react to its scroll events
+    const rowVirtualizerInstanceRef = useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null); //we can get access to the underlying Virtualizer instance and call its scrollToIndex method
 
-                params.set('start', `${pageParam * fetchSize}`);
-                params.set('limit', `${fetchSize}`);
-                params.set('filters', JSON.stringify(columnFilters ?? []));
-                params.set('globalFilter', globalFilter ?? '');
-                params.set('sorting', JSON.stringify(sorting ?? []));
+    // Query Handling  
+    const { data, fetchNextPage, isError, isFetching, isLoading } = useInfiniteQuery<UserApiResponse>({
+        queryKey: ['table-data', columnFilters, globalFilter, sorting],
+        queryFn: async ({ pageParam = 0 }) => {
+            const baseUrl = 'users';
+            const params = new URLSearchParams();
 
-                const url = `${baseUrl}?${params.toString()}`;
+            params.set('start', `${pageParam * fetchSize}`);
+            params.set('limit', `${fetchSize}`);
+            params.set('filters', JSON.stringify(columnFilters ?? []));
+            params.set('globalFilter', globalFilter ?? '');
+            params.set('sorting', JSON.stringify(sorting ?? []));
 
-                const response = await axios.get(url);
-                const json = response.data as UserApiResponse;
-                return json;
-
-            },
-            getNextPageParam: (_lastGroup, groups) => groups.length,
-            keepPreviousData: true,
-            refetchOnWindowFocus: false,
-        });
-
-    let flatData: any[] = useMemo(
-        () => {
-            setFlatRowData(data?.pages.flatMap((page) => page.users) ?? []);
-            return data?.pages.flatMap((page) => page.users) ?? [];
+            const url = `${baseUrl}?${params.toString()}`;
+            const response = await axios.get(url);
+            return response.data as UserApiResponse;
         },
-        [data],
+        getNextPageParam: (_lastGroup, groups) => groups.length,
+        keepPreviousData: true,
+        refetchOnWindowFocus: false,
+    });
 
-    );
+    // Preparing Table Data
+    let flatData = useMemo(() => {
+        if (!data) return [];
+        const users = data.pages.flatMap((page) => page.users);
+        setFlatRowData(users);
+        return users;
+    }, [data]);
 
+    // Column headers creation
     const columns: MRT_ColumnDef<any>[] = useMemo(() => {
-        if (data) {
-            return InfintieColumns(data?.pages[0].users?.[0]);
-        }
-        return [];
-    }, [data, isLoading]);
+        if (!data) return [];
+        const firstUser = data?.pages[0].users?.[0];
+        return InfintieColumns(firstUser);
+    }, [data]);
 
 
     const totalDBRowCount = data?.pages?.[0].total ?? 0;
@@ -136,13 +114,10 @@ const InfiniteScroll = () => {
     }, [fetchMoreOnBottomReached]);
 
 
-    //optionally, you can manage the row selection state yourself
-    const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
-
-    useEffect(() => {
-        //do something when the row selection changes...
-        // console.info({ rowSelection });
-    }, [rowSelection]);
+    // useEffect(() => {
+    //     //do something when the row selection changes...
+    //     // console.info({ rowSelection });
+    // }, [rowSelection]);
 
     return (
         <>
@@ -253,8 +228,8 @@ const InfiniteScroll = () => {
                     })}
 
                 // initialState={{ // initial state or DefaultState when initially Loading the Table
-                // columnVisibility: { description: false },
-                // showColumnFilters: true
+                //     // columnVisibility: { description: false },
+                //     showColumnFilters: false,
                 // }}
 
                 // manualFiltering // For Server Side Filtering by passing params filters: [{"id":"id","value":"12"}]
@@ -270,5 +245,5 @@ const InfiniteScroll = () => {
     );
 };
 
-export default InfiniteScroll;
+export default memo(InfiniteScroll);
 

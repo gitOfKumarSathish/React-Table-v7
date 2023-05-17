@@ -63,6 +63,11 @@ type ColumnType = {
     className?: string;
 };
 
+interface UserApiResponse {
+    total: number;
+    users: any[];
+    limit: number;
+}
 
 export type {
     IData,
@@ -75,7 +80,8 @@ export type {
     SortingDisableType,
     ColumnType,
     RowProps,
-    Info
+    Info,
+    UserApiResponse
 };
 
 

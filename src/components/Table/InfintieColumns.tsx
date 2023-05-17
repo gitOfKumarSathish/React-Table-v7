@@ -19,20 +19,9 @@ export function InfintieColumns(data: any[]): ColumnType[] {
             header: columnName,
             accessorKey: columnName,
             filterFn: 'includesString',
-            // filterFn: (row, id, filterValue) => row.getValue(id).startsWith(filterValue),
-            // filterFn: 'customAndOperatorFilter',
-            // filterFn: (row, id, filterValues) => {
-            //     let filterResult = true;
-
-            //     for (const filterValue of filterValues) {
-            //         filterResult = filterResult && row.getValue(id).includes(filterValue);
-            //     }
-
-            //     return filterResult;
-            // }
         };
         if (columnName === "image") {
-            column.Cell = ({ cell }: { cell: any; }) => <img src={cell.getValue()} width={35} />;
+            column.Cell = ({ cell }: { cell: any; }) => <img src={cell.getValue()} width={30} />;
         }
         else if (columnName === "eyeColor") {
             column.Cell = ({ cell }: { cell: any; }) => (
