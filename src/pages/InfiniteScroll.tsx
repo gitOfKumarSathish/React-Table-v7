@@ -33,7 +33,8 @@ const InfiniteScroll = () => {
     const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
 
     const tableContainerRef = useRef<HTMLDivElement>(null); //we can get access to the underlying TableContainer element and react to its scroll events
-    const rowVirtualizerInstanceRef = useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null); //we can get access to the underlying Virtualizer instance and call its scrollToIndex method
+
+    // const rowVirtualizerInstanceRef = useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null); //we can get access to the underlying Virtualizer instance and call its scrollToIndex method
 
     // Query Handling  
     const { data, fetchNextPage, isError, isFetching, isLoading } = APIDataFetching(columnFilters, globalFilter, sorting);
@@ -79,11 +80,13 @@ const InfiniteScroll = () => {
     useEffect(() => {
         //scroll to the top of the table when the sorting changes
         try {
-            rowVirtualizerInstanceRef.current?.scrollToIndex?.(0);
+            // rowVirtualizerInstanceRef.current?.scrollToIndex?.(0);
+            tableContainerRef.current?.scrollTo(0, 0);
         } catch (error) {
             console.error(error);
         }
     }, [sorting, columnFilters, globalFilter]);
+    console.log('tableContainerRef', tableContainerRef.current?.scrollTo(0, 0));
 
     //a check on mount to see if the table is already scrolled to the bottom and immediately needs to fetch more data
     useEffect(() => {
