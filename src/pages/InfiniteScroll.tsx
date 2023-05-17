@@ -17,13 +17,12 @@ import MaterialReactTable, {
 } from 'material-react-table';
 import { Box, IconButton, Tooltip, Typography, Zoom } from '@mui/material';
 import {
-    QueryClient,
-    QueryClientProvider,
     useInfiniteQuery,
 } from '@tanstack/react-query';
 import InfoIcon from '@mui/icons-material/Info';
 import { InfintieColumns } from '../components/Table/InfintieColumns';
 import InfiniteRowExpand from '../components/Table/InfiniteRowExpand';
+import axios from 'axios';
 
 
 type UserApiResponse = {
@@ -62,18 +61,21 @@ const InfiniteScroll = () => {
         useInfiniteQuery<UserApiResponse>({
             queryKey: ['table-data', columnFilters, globalFilter, sorting],
             queryFn: async ({ pageParam = 0 }) => {
-                const url = new URL(
-                    'https://dummyjson.com/users'
-                );
-                url.searchParams.set('start', `${pageParam * fetchSize}`);
-                url.searchParams.set('limit', `${fetchSize}`);
-                url.searchParams.set('filters', JSON.stringify(columnFilters ?? []));
-                url.searchParams.set('globalFilter', globalFilter ?? '');
-                url.searchParams.set('sorting', JSON.stringify(sorting ?? []));
+                const baseUrl = 'users';
+                const params = new URLSearchParams();
 
-                const response = await fetch(url.href);
-                const json = (await response.json()) as UserApiResponse;
+                params.set('start', `${pageParam * fetchSize}`);
+                params.set('limit', `${fetchSize}`);
+                params.set('filters', JSON.stringify(columnFilters ?? []));
+                params.set('globalFilter', globalFilter ?? '');
+                params.set('sorting', JSON.stringify(sorting ?? []));
+
+                const url = `${baseUrl}?${params.toString()}`;
+
+                const response = await axios.get(url);
+                const json = response.data as UserApiResponse;
                 return json;
+
             },
             getNextPageParam: (_lastGroup, groups) => groups.length,
             keepPreviousData: true,
@@ -318,14 +320,5 @@ const InfiniteScroll = () => {
     );
 };
 
-const queryClient = new QueryClient();
-
-const ExampleWithReactQueryProvider = () => (
-    <QueryClientProvider client={queryClient}>
-        <InfiniteScroll />
-    </QueryClientProvider>
-);
-
-export default ExampleWithReactQueryProvider;
-// export default InfinteScroll;
+export default InfiniteScroll;
 
