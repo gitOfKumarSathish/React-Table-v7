@@ -1,4 +1,4 @@
-import React, {
+import {
     UIEvent,
     useCallback,
     useEffect,
@@ -12,9 +12,8 @@ import MaterialReactTable, {
     type MRT_ColumnFiltersState,
     type MRT_SortingState,
     type MRT_Virtualizer,
-    MRT_ShowHideColumnsButton,
-    MRT_ToggleFiltersButton,
     MRT_Row,
+
 } from 'material-react-table';
 import { Box, IconButton, Tooltip, Typography, Zoom } from '@mui/material';
 import {
@@ -147,15 +146,43 @@ const InfiniteScroll = () => {
         <>
             <section> {!isLoading &&
                 <MaterialReactTable
-                    columns={columns}
-                    data={flatRowData}
-                    enablePagination={false}
-                    enableRowNumbers
-                    enableHiding={true}
-                    initialState={{
-                        columnVisibility: { description: false },
-                        showColumnFilters: true
+                    columns={columns} // Columns For Table 
+                    data={flatRowData} // Data For Table 
+                    enablePagination={false} // turn off pagination
+                    enableRowNumbers // turn on row numbers # of rows
+                    enableHiding // Hiding Columns Property
+
+                    enableRowOrdering // Drag and drop Property for rows
+                    enableColumnOrdering // Drag and drop Property for columns
+
+                    enableRowVirtualization //optional, but recommended if it is likely going to be more than 100 rows
+                    rowVirtualizerInstanceRef={rowVirtualizerInstanceRef} //get access to the virtualizer instance
+                    rowVirtualizerProps={{ overscan: 25, estimateSize: () => 100, }}
+
+                    enableExpandAll={false} //Row Expand All Property
+                    renderDetailPanel={({ row }) => (<InfiniteRowExpand row={row} />)} //Row Expand Component
+
+
+                    enableColumnResizing // Column Resizing Property
+                    enableGlobalFilterModes // Global Filter Mode Property like Fuzzy Filter etc. 
+                    globalFilterFn="contains"
+                    enableFilterMatchHighlighting // Filter Match Highlighting Property
+                    enableColumnFilterModes // Column Filter Mode Property
+                    muiTableHeadCellFilterTextFieldProps={{ //Column Box Style 
+                        sx: { m: '0.5rem 0', width: '100%' },
+                        variant: 'outlined',
                     }}
+
+                    // manualFiltering // For Server Side Filtering by passing params filters: [{"id":"id","value":"12"}]
+                    // manualSorting // For Server Side Sorting by passing params sorting: [{"id":"lastName","desc":false}]
+
+                    enableRowSelection // Enable row selection property
+                    enableMultiRowSelection={true}  // Enable Multi row selection property
+
+                    enablePinning // Enable Column Pinning property
+
+                    enableDensityToggle={false} //enable density toggle Property
+                    enableFullScreenToggle={false} //enable full screen toggle Property
 
                     // filterFns={{
                     //     customFilterFn: (row, id, filterValue) => {
@@ -185,39 +212,38 @@ const InfiniteScroll = () => {
                     // },
                     // }}
 
-                    displayColumnDefOptions={{
-                        'mrt-row-actions': {
-                            size: 350, //set custom width
-                            muiTableHeadCellProps: {
-                                align: 'center', //change head cell props
-                            },
-                        },
-                        'mrt-row-numbers': {
-                            enableColumnOrdering: true, //turn on some features that are usually off
-                            enableResizing: true,
-                            muiTableHeadCellProps: {
-                                sx: {
-                                    fontSize: '1.2rem',
-                                },
-                            },
-                        },
-                        'mrt-row-select': {
-                            enableColumnActions: true,
-                            enableHiding: true,
-                            size: 100,
-                        },
-                    }}
-                    enableRowVirtualization //optional, but recommended if it is likely going to be more than 100 rows
-                    // manualFiltering
-                    // manualSorting
+                    // displayColumnDefOptions={{
+                    //     'mrt-row-actions': {
+                    //         size: 350, //set custom width
+                    //         muiTableHeadCellProps: {
+                    //             align: 'center', //change head cell props
+                    //         },
+                    //     },
+                    //     'mrt-row-numbers': {
+                    //         enableColumnOrdering: true, //turn on some features that are usually off
+                    //         enableResizing: true,
+                    //         muiTableHeadCellProps: {
+                    //             sx: {
+                    //                 fontSize: '1.2rem',
+                    //             },
+                    //         },
+                    //     },
+                    //     'mrt-row-select': {
+                    //         enableColumnActions: true,
+                    //         enableHiding: true,
+                    //         size: 100,
+                    //     },
+                    // }}
+
                     muiTableContainerProps={{
                         ref: tableContainerRef, //get access to the table container element
-                        sx: { maxHeight: '500px' }, //give the table a max height
+                        // sx: { maxHeight: '500px' }, //give the table a max height
                         onScroll: (
                             event: UIEvent<HTMLDivElement>, //add an event listener to the table container element
                         ) => fetchMoreOnBottomReached(event.target as HTMLDivElement),
                     }}
-                    muiToolbarAlertBannerProps={
+
+                    muiToolbarAlertBannerProps={ // Error Handling for Data
                         isError
                             ? {
                                 color: 'error',
@@ -228,12 +254,39 @@ const InfiniteScroll = () => {
                     onColumnFiltersChange={setColumnFilters}
                     onGlobalFilterChange={setGlobalFilter}
                     onSortingChange={setSorting}
-                    renderBottomToolbarCustomActions={() => (
+
+                    renderBottomToolbarCustomActions={() => ( // Rows fetched from the server along with total number of Rows in the table
                         <Typography>
                             Fetched {totalFetched} of {totalDBRowCount} total rows.
                         </Typography>
                     )}
-                    state={{
+
+                    getRowId={(row) => row?.name} //give each row Original Data  
+                    onRowSelectionChange={setRowSelection} //connect internal row selection state to your own
+
+
+                    muiTableBodyRowProps={({ row }) => ({ // Row Selection Properties on click of Row
+                        onClick: row.getToggleSelectedHandler(),
+                        sx: { cursor: 'pointer' },
+                    })}
+
+                    renderTopToolbarCustomActions={() => ( // Add custom Info button 
+                        <Box>
+                            <Tooltip TransitionComponent={Zoom} title="To perform multiple sorting, please press and hold down the Shift key.">
+                                <IconButton >
+                                    <InfoIcon />
+                                </IconButton>
+                            </Tooltip>
+                        </Box>
+                    )}
+
+
+                    initialState={{ // initial state or DefaultState when initially Loading the Table
+                        columnVisibility: { description: false },
+                        showColumnFilters: true
+                    }}
+
+                    state={{ // State of the table
                         columnFilters,
                         globalFilter,
                         isLoading,
@@ -243,49 +296,8 @@ const InfiniteScroll = () => {
                         density: 'compact',
                         rowSelection
                     }}
-                    enableColumnResizing
-                    enableGlobalFilterModes
-                    enableFilterMatchHighlighting
-                    enableColumnFilterModes
-                    muiTableHeadCellFilterTextFieldProps={{
-                        sx: { m: '0.5rem 0', width: '100%' },
-                        variant: 'outlined',
-                    }}
 
-                    rowVirtualizerInstanceRef={rowVirtualizerInstanceRef} //get access to the virtualizer instance
-                    rowVirtualizerProps={{ overscan: 1 }}
-
-                    enableDensityToggle={false}
-
-                    getRowId={(row) => row?.name} //give each row a more useful id
-                    onRowSelectionChange={setRowSelection} //connect internal row selection state to your own
-
-                    enableMultiRowSelection={true}
-                    enableRowSelection
-                    enablePinning
-                    muiTableBodyRowProps={({ row }) => ({
-                        onClick: row.getToggleSelectedHandler(),
-                        sx: { cursor: 'pointer' },
-                    })}
-                    renderToolbarInternalActions={({ table }): any => (
-                        <Box>
-                            {/* along-side built-in buttons in whatever order you want them */}
-                            <MRT_ToggleFiltersButton table={table} />
-                            {/* <MRT_ToggleDensePaddingButton table={table} /> */}
-                            {/* <MRT_FullScreenToggleButton table={table} /> */}
-                            <MRT_ShowHideColumnsButton table={table} />
-                            <Tooltip TransitionComponent={Zoom} title="To perform multiple sorting, please press and hold down the Shift key.">
-                                <IconButton >
-                                    <InfoIcon />
-                                </IconButton>
-                            </Tooltip>
-                        </Box>
-                    )}
-
-                    renderDetailPanel={({ row }) => (<InfiniteRowExpand row={row} />)}
-                    enableExpandAll={false}
-
-                    muiTableBodyRowDragHandleProps={({ table }) => ({
+                    muiTableBodyRowDragHandleProps={({ table }) => ({ // Row drag handler
                         onDragEnd: () => {
                             const { draggingRow, hoveredRow } = table.getState();
                             if (hoveredRow && draggingRow && flatData) {
@@ -300,9 +312,6 @@ const InfiniteScroll = () => {
                             }
                         },
                     })}
-
-                    enableRowOrdering
-                    enableColumnOrdering
                 />
             }</section>
         </>
