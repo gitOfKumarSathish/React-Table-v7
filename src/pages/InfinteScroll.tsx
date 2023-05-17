@@ -14,6 +14,7 @@ import MaterialReactTable, {
     type MRT_Virtualizer,
     MRT_ShowHideColumnsButton,
     MRT_ToggleFiltersButton,
+    MRT_Row,
 } from 'material-react-table';
 import { Box, IconButton, Tooltip, Typography, Zoom } from '@mui/material';
 import {
@@ -44,19 +45,19 @@ type User = {
     phoneNumber: string;
 };
 
-const fetchSize = 20;
+const fetchSize = 25;
 
 const InfiniteScroll = () => {
     const tableContainerRef = useRef<HTMLDivElement>(null); //we can get access to the underlying TableContainer element and react to its scroll events
     const rowVirtualizerInstanceRef =
         useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null); //we can get access to the underlying Virtualizer instance and call its scrollToIndex method
 
-    const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(
-        [],
-    );
+    const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
     // const [columns, setColumns] = useState<MRT_ColumnDef<User>[]>([]);
     const [globalFilter, setGlobalFilter] = useState<string>();
     const [sorting, setSorting] = useState<MRT_SortingState>([]);
+
+    const [flatRowData, setFlatRowData] = useState<any>([]);
 
     const { data, fetchNextPage, isError, isFetching, isLoading } =
         useInfiniteQuery<UserApiResponse>({
@@ -80,8 +81,9 @@ const InfiniteScroll = () => {
             refetchOnWindowFocus: false,
         });
 
-    const flatData = useMemo(
+    let flatData: any[] = useMemo(
         () => {
+            setFlatRowData(data?.pages.flatMap((page) => page.users) ?? []);
             return data?.pages.flatMap((page) => page.users) ?? [];
         },
         [data],
@@ -95,10 +97,9 @@ const InfiniteScroll = () => {
         return [];
     }, [data, isLoading]);
 
-    console.log('columns', columns);
 
     const totalDBRowCount = data?.pages?.[0].total ?? 0;
-    const totalFetched = flatData.length;
+    const totalFetched = flatRowData.length;
 
     //called on scroll and possibly on mount to fetch more data as the user scrolls and reaches bottom of table
     const fetchMoreOnBottomReached = useCallback(
@@ -139,7 +140,7 @@ const InfiniteScroll = () => {
 
     useEffect(() => {
         //do something when the row selection changes...
-        console.info({ rowSelection });
+        // console.info({ rowSelection });
     }, [rowSelection]);
 
     return (
@@ -147,13 +148,42 @@ const InfiniteScroll = () => {
             <section> {!isLoading &&
                 <MaterialReactTable
                     columns={columns}
-                    data={flatData}
+                    data={flatRowData}
                     enablePagination={false}
                     enableRowNumbers
                     enableHiding={true}
                     initialState={{
-                        columnVisibility: { description: false }
+                        columnVisibility: { description: false },
+                        showColumnFilters: true
                     }}
+
+                    // filterFns={{
+                    //     customFilterFn: (row, id, filterValue) => {
+                    //         console.log('asasa', row.getValue(id));
+                    //         console.log('row.getValue(id) == filterValue', row.getValue(id) == filterValue);
+                    //         const alphabetsOnly = /[a-zA-Z\d]+/g;
+                    //         const result = filterValue.match(alphabetsOnly);
+                    //         console.log('result', result);
+                    //         let cc = result.map((value, index) => {
+                    //             console.log('check');
+                    //             return row.getValue(id) == (value);
+                    //         });
+                    //         console.log('cc', cc.join(''));
+                    //         return cc[0];
+                    //         // return row.getValue(id) == filterValue;
+                    //     },
+                    // }}
+
+                    // customAndOperatorFilter: (row, id, filterValues) => {
+                    //     let filterResult = true;
+
+                    //     for (const filterValue of filterValues) {
+                    //         filterResult = filterResult && row.getValue(id).includes(filterValue);
+                    //     }
+
+                    //     return filterResult;
+                    // },
+                    // }}
 
                     displayColumnDefOptions={{
                         'mrt-row-actions': {
@@ -177,7 +207,6 @@ const InfiniteScroll = () => {
                             size: 100,
                         },
                     }}
-
                     enableRowVirtualization //optional, but recommended if it is likely going to be more than 100 rows
                     // manualFiltering
                     // manualSorting
@@ -224,7 +253,7 @@ const InfiniteScroll = () => {
                     }}
 
                     rowVirtualizerInstanceRef={rowVirtualizerInstanceRef} //get access to the virtualizer instance
-                    rowVirtualizerProps={{ overscan: 0 }}
+                    rowVirtualizerProps={{ overscan: 1 }}
 
                     enableDensityToggle={false}
 
@@ -255,6 +284,25 @@ const InfiniteScroll = () => {
 
                     renderDetailPanel={({ row }) => (<InfiniteRowExpand row={row} />)}
                     enableExpandAll={false}
+
+                    muiTableBodyRowDragHandleProps={({ table }) => ({
+                        onDragEnd: () => {
+                            const { draggingRow, hoveredRow } = table.getState();
+                            if (hoveredRow && draggingRow && flatData) {
+                                flatData?.splice(
+                                    (hoveredRow as MRT_Row).index,
+                                    0,
+                                    flatData?.splice(draggingRow.index, 1)[0],
+                                );
+                                // setData([...data]);
+                                // flatData = [...flatData];
+                                setFlatRowData([...flatData]);
+                            }
+                        },
+                    })}
+
+                    enableRowOrdering
+                    enableColumnOrdering
                 />
             }</section>
         </>
