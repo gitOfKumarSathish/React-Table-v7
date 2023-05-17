@@ -5,15 +5,7 @@ function InfiniteRowExpand({ row }: any) {
 
     return (
         (row.original &&
-            <Box
-                sx={{
-                    display: 'grid',
-                    margin: 'auto',
-                    gridTemplateColumns: '1fr 1fr',
-                    width: '100%',
-                }}
-            >
-
+            <Box className="row-expand" >
                 <Typography><b>cardExpire:</b> {row.original.bank.cardExpire}</Typography>
                 <Typography><b>Card Number:</b> {row.original.bank.cardNumber}</Typography>
                 <Typography><b>Card Type:</b> {row.original.bank.cardType}</Typography>

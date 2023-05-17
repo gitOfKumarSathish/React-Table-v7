@@ -156,12 +156,9 @@ const InfiniteScroll = () => {
 
                     enableRowOrdering // Drag and drop Property for rows
                     enableColumnOrdering // Drag and drop Property for columns
+                    enableStickyHeader // Set the sticky header property
 
-                    enableRowVirtualization //optional, but recommended if it is likely going to be more than 100 rows
-                    rowVirtualizerInstanceRef={rowVirtualizerInstanceRef} //get access to the virtualizer instance
-                    rowVirtualizerProps={{ overscan: 25, estimateSize: () => 100, }}
-
-                    enableExpandAll={false} //Row Expand All Property
+                    enableExpandAll //Row Expand All Property
                     renderDetailPanel={({ row }) => (<InfiniteRowExpand row={row} />)} //Row Expand Component
 
 
@@ -175,9 +172,6 @@ const InfiniteScroll = () => {
                         variant: 'outlined',
                     }}
 
-                    // manualFiltering // For Server Side Filtering by passing params filters: [{"id":"id","value":"12"}]
-                    // manualSorting // For Server Side Sorting by passing params sorting: [{"id":"lastName","desc":false}]
-
                     enableRowSelection // Enable row selection property
                     enableMultiRowSelection={true}  // Enable Multi row selection property
 
@@ -186,60 +180,9 @@ const InfiniteScroll = () => {
                     enableDensityToggle={false} //enable density toggle Property
                     enableFullScreenToggle={false} //enable full screen toggle Property
 
-                    // filterFns={{
-                    //     customFilterFn: (row, id, filterValue) => {
-                    //         console.log('asasa', row.getValue(id));
-                    //         console.log('row.getValue(id) == filterValue', row.getValue(id) == filterValue);
-                    //         const alphabetsOnly = /[a-zA-Z\d]+/g;
-                    //         const result = filterValue.match(alphabetsOnly);
-                    //         console.log('result', result);
-                    //         let cc = result.map((value, index) => {
-                    //             console.log('check');
-                    //             return row.getValue(id) == (value);
-                    //         });
-                    //         console.log('cc', cc.join(''));
-                    //         return cc[0];
-                    //         // return row.getValue(id) == filterValue;
-                    //     },
-                    // }}
-
-                    // customAndOperatorFilter: (row, id, filterValues) => {
-                    //     let filterResult = true;
-
-                    //     for (const filterValue of filterValues) {
-                    //         filterResult = filterResult && row.getValue(id).includes(filterValue);
-                    //     }
-
-                    //     return filterResult;
-                    // },
-                    // }}
-
-                    // displayColumnDefOptions={{
-                    //     'mrt-row-actions': {
-                    //         size: 350, //set custom width
-                    //         muiTableHeadCellProps: {
-                    //             align: 'center', //change head cell props
-                    //         },
-                    //     },
-                    //     'mrt-row-numbers': {
-                    //         enableColumnOrdering: true, //turn on some features that are usually off
-                    //         enableResizing: true,
-                    //         muiTableHeadCellProps: {
-                    //             sx: {
-                    //                 fontSize: '1.2rem',
-                    //             },
-                    //         },
-                    //     },
-                    //     'mrt-row-select': {
-                    //         enableColumnActions: true,
-                    //         enableHiding: true,
-                    //         size: 100,
-                    //     },
-                    // }}
-
                     muiTableContainerProps={{
                         ref: tableContainerRef, //get access to the table container element
-                        // sx: { maxHeight: '500px' }, //give the table a max height
+                        sx: { maxHeight: '450px' }, //give the table a max height
                         onScroll: (
                             event: UIEvent<HTMLDivElement>, //add an event listener to the table container element
                         ) => fetchMoreOnBottomReached(event.target as HTMLDivElement),
@@ -282,12 +225,6 @@ const InfiniteScroll = () => {
                         </Box>
                     )}
 
-
-                    initialState={{ // initial state or DefaultState when initially Loading the Table
-                        columnVisibility: { description: false },
-                        showColumnFilters: true
-                    }}
-
                     state={{ // State of the table
                         columnFilters,
                         globalFilter,
@@ -314,6 +251,19 @@ const InfiniteScroll = () => {
                             }
                         },
                     })}
+
+                // initialState={{ // initial state or DefaultState when initially Loading the Table
+                // columnVisibility: { description: false },
+                // showColumnFilters: true
+                // }}
+
+                // manualFiltering // For Server Side Filtering by passing params filters: [{"id":"id","value":"12"}]
+                // manualSorting // For Server Side Sorting by passing params sorting: [{"id":"lastName","desc":false}]
+
+
+                // enableRowVirtualization //optional, but recommended if it is likely going to be more than 100 rows
+                // rowVirtualizerInstanceRef={rowVirtualizerInstanceRef} //get access to the virtualizer instance
+                // rowVirtualizerProps={{ overscan: 25, estimateSize: () => 100, }}
                 />
             }</section>
         </>

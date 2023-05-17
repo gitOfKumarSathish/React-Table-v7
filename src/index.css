@@ -175,3 +175,11 @@ p.lineInfo {
 .Mui-TableHeadCell-Content-Labels {
   text-transform: capitalize;
 }
+
+.row-expand {
+  display: flex;
+  justify-content: space-between;
+  width: 25%;
+  text-align: left;
+  flex-direction: column;
+}
