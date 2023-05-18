@@ -22,6 +22,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import { InfintieColumns } from '../components/Table/InfintieColumns';
 import InfiniteRowExpand from '../components/Table/InfiniteRowExpand';
 import { APIDataFetching } from '../components/Table/InfiniteAPI';
+import ColumnStore from '../components/Table/ColumnStore';
 
 const InfiniteScroll = () => {
 
@@ -92,11 +93,6 @@ const InfiniteScroll = () => {
         fetchMoreOnBottomReached(tableContainerRef.current);
     }, [fetchMoreOnBottomReached]);
 
-
-    // useEffect(() => {
-    //     //do something when the row selection changes...
-    //     // console.info({ rowSelection });
-    // }, [rowSelection]);
     if (isLoading) return <div><CircularProgress /> <h3>  Loading...</h3></div>;
     return (
         <>
@@ -108,6 +104,7 @@ const InfiniteScroll = () => {
                     enableRowNumbers // turn on row numbers # of rows
                     enableHiding // Hiding Columns Property
 
+
                     enableRowOrdering // Drag and drop Property for rows
                     enableColumnOrdering // Drag and drop Property for columns
                     enableStickyHeader // Set the sticky header property
@@ -115,7 +112,9 @@ const InfiniteScroll = () => {
                     enableExpandAll //Row Expand All Property
                     renderDetailPanel={({ row }) => (<InfiniteRowExpand row={row} />)} //Row Expand Component
 
-
+                    muiTableBodyProps={({ table }): any => {
+                        ColumnStore(table);
+                    }}
                     enableColumnResizing // Column Resizing Property
                     enableGlobalFilterModes // Global Filter Mode Property like Fuzzy Filter etc. 
                     globalFilterFn="contains"
@@ -198,10 +197,10 @@ const InfiniteScroll = () => {
                         },
                     })}
 
-                // initialState={{ // initial state or DefaultState when initially Loading the Table
-                //     // columnVisibility: { description: false },
-                //     showColumnFilters: false,
-                // }}
+                    initialState={{ // initial state or DefaultState when initially Loading the Table
+                        columnVisibility: JSON.parse(localStorage.getItem('hiddenColumn') || '{}'),
+                        showColumnFilters: false,
+                    }}
 
                 // manualFiltering // For Server Side Filtering by passing params filters: [{"id":"id","value":"12"}]
                 // manualSorting // For Server Side Sorting by passing params sorting: [{"id":"lastName","desc":false}]
@@ -217,6 +216,8 @@ const InfiniteScroll = () => {
 };
 
 export default memo(InfiniteScroll);
+
+
 
 
 
