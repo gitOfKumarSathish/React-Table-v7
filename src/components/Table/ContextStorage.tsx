@@ -6,6 +6,7 @@ function ContextStorage() {
 
     let {
         enablePinning,
+        enableRowSelection,
         enableMultiRowSelection,
         enableRowOrdering,
         enableColumnOrdering,
@@ -27,6 +28,7 @@ function ContextStorage() {
     } = config.globalConfig;
 
     enablePinning = enablePinning === false ? false : true;
+    enableRowSelection = enableRowSelection === false ? false : true;
     enableMultiRowSelection = enableMultiRowSelection === false ? false : true;
     enableRowOrdering = enableRowOrdering === false ? false : true;
     enableColumnOrdering = enableColumnOrdering === false ? false : true;
@@ -48,6 +50,7 @@ function ContextStorage() {
 
     return {
         enablePinning,
+        enableRowSelection,
         enableMultiRowSelection,
         enableRowOrdering,
         enableColumnOrdering,

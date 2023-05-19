@@ -15,6 +15,7 @@ const configuration = {
   },
   globalConfig: {
     enablePinning: false,
+    enableRowSelection: false,
     enableMultiRowSelection: false,
     enableRowOrdering: false,
     enableColumnOrdering: false,
@@ -25,15 +26,32 @@ const configuration = {
     enableColumnResizing: false, // Column Resizing Property
     enableFilterMatchHighlighting: false,
     enablePagination: false, // Pagination Property,
-    enableColumnFilters: false, // Column Filters Property
-    enableSorting: false, // Sorting Property
+    // enableColumnFilters: false, // Column Filters Property
+    // enableSorting: false, // Sorting Property
     enableGlobalFilter: false, // Global Filter Property,
     enableGlobalFilterModes: false, // Global Filter Mode Property
     globalFilterFn: 'contains', // Global Filter
     enableDensityToggle: false, // Enable density toggle padding property
     enableFullScreenToggle: false, // Enable full screen toggle property
     enableRowVirtualization: false, // Enable row virtualization
-  }
+  },
+  columnConfig: [
+    {
+      header: 'image',
+      enableColumnFilter: false,
+      enableSorting: false,
+    },
+    {
+      header: 'height',
+      enableColumnFilter: false,
+      enableSorting: false,
+    },
+    {
+      header: 'eyeColor',
+      enableColumnFilter: false,
+      enableSorting: false,
+    }
+  ]
 
 };
 

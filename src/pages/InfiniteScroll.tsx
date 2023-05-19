@@ -24,14 +24,14 @@ import { InfintieColumns } from '../components/Table/InfintieColumns';
 import InfiniteRowExpand from '../components/Table/InfiniteRowExpand';
 import { APIDataFetching } from '../components/Table/InfiniteAPI';
 import ColumnStore from '../components/Table/ColumnStore';
-import { ConfigContext } from '../App';
 import ContextStorage from '../components/Table/ContextStorage';
-// import { enablePinning, enableMultiRowSelection, enableRowOrdering, enableColumnOrdering, enableRowNumbers, enableHiding, } from "./../components/Table/ContextStorage";
+import { ConfigContext } from '../App';
 
 const InfiniteScroll = () => {
     console.log('ContextStorage', ContextStorage());
     const {
         enablePinning,
+        enableRowSelection,
         enableMultiRowSelection,
         enableRowOrdering,
         enableColumnOrdering,
@@ -50,8 +50,8 @@ const InfiniteScroll = () => {
         enableFullScreenToggle,
         enableRowVirtualization
     }: any = ContextStorage();
-    // const config: any = useContext(ConfigContext);
-
+    const config: any = useContext(ConfigContext);
+    const columnConfigurations = config.columnConfig;
     const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState<string>();
     const [sorting, setSorting] = useState<MRT_SortingState>([]);
@@ -78,7 +78,7 @@ const InfiniteScroll = () => {
     const columns: MRT_ColumnDef<any>[] = useMemo(() => {
         if (!data) return [];
         const firstUser = data?.pages[0].users?.[0];
-        return InfintieColumns(firstUser);
+        return InfintieColumns(firstUser, columnConfigurations);
     }, [data]);
 
 
@@ -130,7 +130,6 @@ const InfiniteScroll = () => {
                     enableRowNumbers={enableRowNumbers} // turn on row numbers # of rows
                     enableHiding={enableHiding} // Hiding Columns Property
 
-
                     enableRowOrdering={enableRowOrdering} // Drag and drop Property for rows
                     enableColumnOrdering={enableColumnOrdering} // Drag and drop Property for columns
                     enableStickyHeader={enableStickyHeader} // Set the sticky header property
@@ -155,7 +154,7 @@ const InfiniteScroll = () => {
                         variant: 'outlined',
                     }}
 
-                    enableRowSelection // Enable row selection property
+                    enableRowSelection={enableRowSelection} // Enable row selection property
                     enableMultiRowSelection={enableMultiRowSelection}  // Enable Multi row selection property
 
                     enablePinning={enablePinning} // Enable Column Pinning property
