@@ -6,6 +6,7 @@ import {
     useMemo,
     useRef,
     useState,
+    useContext
 } from 'react';
 import MaterialReactTable, {
     MRT_RowSelectionState,
@@ -23,8 +24,33 @@ import { InfintieColumns } from '../components/Table/InfintieColumns';
 import InfiniteRowExpand from '../components/Table/InfiniteRowExpand';
 import { APIDataFetching } from '../components/Table/InfiniteAPI';
 import ColumnStore from '../components/Table/ColumnStore';
+import { ConfigContext } from '../App';
+import ContextStorage from '../components/Table/ContextStorage';
+// import { enablePinning, enableMultiRowSelection, enableRowOrdering, enableColumnOrdering, enableRowNumbers, enableHiding, } from "./../components/Table/ContextStorage";
 
 const InfiniteScroll = () => {
+    console.log('ContextStorage', ContextStorage());
+    const {
+        enablePinning,
+        enableMultiRowSelection,
+        enableRowOrdering,
+        enableColumnOrdering,
+        enableRowNumbers,
+        enableHiding,
+        enableStickyHeader,
+        enableExpandAll,
+        enableColumnResizing,
+        enableGlobalFilterModes,
+        enableFilterMatchHighlighting,
+        enablePagination,
+        enableColumnFilters,
+        enableSorting,
+        enableGlobalFilter,
+        enableDensityToggle,
+        enableFullScreenToggle,
+        enableRowVirtualization
+    }: any = ContextStorage();
+    // const config: any = useContext(ConfigContext);
 
     const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState<string>();
@@ -35,7 +61,7 @@ const InfiniteScroll = () => {
 
     const tableContainerRef = useRef<HTMLDivElement>(null); //we can get access to the underlying TableContainer element and react to its scroll events
 
-    // const rowVirtualizerInstanceRef = useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null); //we can get access to the underlying Virtualizer instance and call its scrollToIndex method
+    const rowVirtualizerInstanceRef = useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null); //we can get access to the underlying Virtualizer instance and call its scrollToIndex method
 
     // Query Handling  
     const { data, fetchNextPage, isError, isFetching, isLoading } = APIDataFetching(columnFilters, globalFilter, sorting);
@@ -100,25 +126,29 @@ const InfiniteScroll = () => {
                 <MaterialReactTable
                     columns={columns} // Columns For Table 
                     data={flatRowData} // Data For Table 
-                    enablePagination={false} // turn off pagination
-                    enableRowNumbers // turn on row numbers # of rows
-                    enableHiding // Hiding Columns Property
+                    enablePagination={enablePagination} // turn off pagination
+                    enableRowNumbers={enableRowNumbers} // turn on row numbers # of rows
+                    enableHiding={enableHiding} // Hiding Columns Property
 
 
-                    enableRowOrdering // Drag and drop Property for rows
-                    enableColumnOrdering // Drag and drop Property for columns
-                    enableStickyHeader // Set the sticky header property
+                    enableRowOrdering={enableRowOrdering} // Drag and drop Property for rows
+                    enableColumnOrdering={enableColumnOrdering} // Drag and drop Property for columns
+                    enableStickyHeader={enableStickyHeader} // Set the sticky header property
 
-                    enableExpandAll //Row Expand All Property
+                    enableExpandAll={enableExpandAll} //Row Expand All Property
                     renderDetailPanel={({ row }) => (<InfiniteRowExpand row={row} />)} //Row Expand Component
 
                     muiTableBodyProps={({ table }): any => {
                         ColumnStore(table);
                     }}
-                    enableColumnResizing // Column Resizing Property
-                    enableGlobalFilterModes // Global Filter Mode Property like Fuzzy Filter etc. 
+                    enableSorting={enableSorting}
+
+                    enableColumnResizing={enableColumnResizing} // Column Resizing Property
+                    enableGlobalFilter={enableGlobalFilter}
+                    enableColumnFilters={enableColumnFilters}
+                    enableGlobalFilterModes={enableGlobalFilterModes} // Global Filter Mode Property like Fuzzy Filter etc. 
                     globalFilterFn="contains"
-                    enableFilterMatchHighlighting // Filter Match Highlighting Property
+                    enableFilterMatchHighlighting={enableFilterMatchHighlighting} // Filter Match Highlighting Property
                     enableColumnFilterModes // Column Filter Mode Property
                     muiTableHeadCellFilterTextFieldProps={{ //Column Box Style 
                         sx: { m: '0.5rem 0', width: '100%' },
@@ -126,12 +156,12 @@ const InfiniteScroll = () => {
                     }}
 
                     enableRowSelection // Enable row selection property
-                    enableMultiRowSelection={true}  // Enable Multi row selection property
+                    enableMultiRowSelection={enableMultiRowSelection}  // Enable Multi row selection property
 
-                    enablePinning // Enable Column Pinning property
+                    enablePinning={enablePinning} // Enable Column Pinning property
 
-                    enableDensityToggle={false} //enable density toggle Property
-                    enableFullScreenToggle={false} //enable full screen toggle Property
+                    enableDensityToggle={enableDensityToggle} //enable density toggle Property
+                    enableFullScreenToggle={enableFullScreenToggle} //enable full screen toggle Property
 
                     muiTableContainerProps={{
                         ref: tableContainerRef, //get access to the table container element
@@ -202,13 +232,13 @@ const InfiniteScroll = () => {
                         showColumnFilters: false,
                     }}
 
-                // manualFiltering // For Server Side Filtering by passing params filters: [{"id":"id","value":"12"}]
-                // manualSorting // For Server Side Sorting by passing params sorting: [{"id":"lastName","desc":false}]
+                    // manualFiltering // For Server Side Filtering by passing params filters: [{"id":"id","value":"12"}]
+                    // manualSorting // For Server Side Sorting by passing params sorting: [{"id":"lastName","desc":false}]
 
 
-                // enableRowVirtualization //optional, but recommended if it is likely going to be more than 100 rows
-                // rowVirtualizerInstanceRef={rowVirtualizerInstanceRef} //get access to the virtualizer instance
-                // rowVirtualizerProps={{ overscan: 25, estimateSize: () => 100, }}
+                    enableRowVirtualization={enableRowVirtualization} //optional, but recommended if it is likely going to be more than 100 rows
+                    rowVirtualizerInstanceRef={rowVirtualizerInstanceRef} //get access to the virtualizer instance
+                    rowVirtualizerProps={{ overscan: 25, estimateSize: () => 100, }}
                 />
             }</section>
         </>

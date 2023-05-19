@@ -2,12 +2,17 @@ import axios from "axios";
 import { MRT_ColumnFiltersState, MRT_SortingState } from "material-react-table";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { UserApiResponse } from "../../assets/Interfaces";
-const fetchSize = 25;
-export function APIDataFetching(columnFilters: MRT_ColumnFiltersState, globalFilter: string | undefined, sorting: MRT_SortingState): { data: any; fetchNextPage: any; isError: any; isFetching: any; isLoading: any; } {
+import { ConfigContext } from "../../App";
+import React, { useContext } from "react";
+
+export function APIDataFetching(columnFilters: MRT_ColumnFiltersState, globalFilter: any, sorting: MRT_SortingState) {
+    const config: any = useContext(ConfigContext);
+    const { fetchSize, endPoint } = config.apiHandler;
+
     return useInfiniteQuery<UserApiResponse>({
         queryKey: ['table-data', columnFilters, globalFilter, sorting],
         queryFn: async ({ pageParam = 0 }) => {
-            const baseUrl = 'users';
+            const baseUrl = endPoint!;
             const params = new URLSearchParams();
 
             params.set('start', `${pageParam * fetchSize}`);
@@ -17,8 +22,8 @@ export function APIDataFetching(columnFilters: MRT_ColumnFiltersState, globalFil
             params.set('sorting', JSON.stringify(sorting ?? []));
 
             const url = `${baseUrl}?${params.toString()}`;
-            const response = await axios.get(url);
-            return response.data as UserApiResponse;
+            const response = await axios.get<UserApiResponse>(url);
+            return response.data;
         },
         getNextPageParam: (_lastGroup, groups) => groups.length,
         keepPreviousData: true,
