@@ -11,7 +11,7 @@ interface IColumn {
 }
 
 
-export function InfintieColumns(data: any[], columnConfigurations: any = []): ColumnType[] {
+export function InfintieColumns(data: any[], columnConfigurations: any = [], defaultColumnFilter: string): ColumnType[] {
     const columnKeys = Object.keys(data).filter(
         key => !["hair", "address", "bank", "company"].includes(key)
     );
@@ -19,28 +19,12 @@ export function InfintieColumns(data: any[], columnConfigurations: any = []): Co
         let column: IColumn = {
             header: columnName,
             accessorKey: columnName,
-            filterFn: 'includesString',
+            filterFn: defaultColumnFilter,
         };
-        if (columnName === "image") {
-            column.Cell = ({ cell }: { cell: any; }) => <img src={cell.getValue()} width={30} />;
-        }
-        else if (columnName === "eyeColor") {
-            column.Cell = ({ cell }: { cell: any; }) => (
-                <p
-                    style={{
-                        backgroundColor: cell.getValue(),
-                    }}
-                    className='colorBox'
-                >
-                    &nbsp;
-                </p>);
-        }
-
         for (let i = 0; i < columnConfigurations.length; i++) {
             const header = columnConfigurations[i].header;
             if (columnName === header) {
                 const matchingHeaderProps = columnConfigurations[i];
-                console.log('columnConfigurations[i]', columnConfigurations[i]);
                 for (const key in matchingHeaderProps) {
                     if (Object.prototype.hasOwnProperty.call(matchingHeaderProps, key)) {
                         const element = matchingHeaderProps[key];

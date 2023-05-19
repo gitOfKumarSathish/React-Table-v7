@@ -28,6 +28,22 @@ import ContextStorage from '../components/Table/ContextStorage';
 import { ConfigContext } from '../App';
 
 const InfiniteScroll = () => {
+    const config: any = useContext(ConfigContext);
+    const columnConfigurations = config.columnConfig;
+    const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
+    const [globalFilter, setGlobalFilter] = useState<string>();
+    const [sorting, setSorting] = useState<MRT_SortingState>([]);
+    const [flatRowData, setFlatRowData] = useState<any>([]);
+    //optionally, you can manage the row selection state yourself
+    const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
+
+    const tableContainerRef = useRef<HTMLDivElement>(null); //we can get access to the underlying TableContainer element and react to its scroll events
+
+    const rowVirtualizerInstanceRef = useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null); //we can get access to the underlying Virtualizer instance and call its scrollToIndex method
+
+    // Query Handling  
+    const { data, fetchNextPage, isError, isFetching, isLoading } = APIDataFetching(columnFilters, globalFilter, sorting);
+
     console.log('ContextStorage', ContextStorage());
     const {
         enablePinning,
@@ -48,23 +64,10 @@ const InfiniteScroll = () => {
         enableGlobalFilter,
         enableDensityToggle,
         enableFullScreenToggle,
-        enableRowVirtualization
+        enableRowVirtualization,
+        globalFilterFn,
+        filterFn
     }: any = ContextStorage();
-    const config: any = useContext(ConfigContext);
-    const columnConfigurations = config.columnConfig;
-    const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
-    const [globalFilter, setGlobalFilter] = useState<string>();
-    const [sorting, setSorting] = useState<MRT_SortingState>([]);
-    const [flatRowData, setFlatRowData] = useState<any>([]);
-    //optionally, you can manage the row selection state yourself
-    const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
-
-    const tableContainerRef = useRef<HTMLDivElement>(null); //we can get access to the underlying TableContainer element and react to its scroll events
-
-    const rowVirtualizerInstanceRef = useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null); //we can get access to the underlying Virtualizer instance and call its scrollToIndex method
-
-    // Query Handling  
-    const { data, fetchNextPage, isError, isFetching, isLoading } = APIDataFetching(columnFilters, globalFilter, sorting);
 
     // Preparing Table Data
     let flatData = useMemo(() => {
@@ -78,7 +81,7 @@ const InfiniteScroll = () => {
     const columns: MRT_ColumnDef<any>[] = useMemo(() => {
         if (!data) return [];
         const firstUser = data?.pages[0].users?.[0];
-        return InfintieColumns(firstUser, columnConfigurations);
+        return InfintieColumns(firstUser, columnConfigurations, filterFn);
     }, [data]);
 
 
@@ -146,7 +149,7 @@ const InfiniteScroll = () => {
                     enableGlobalFilter={enableGlobalFilter}
                     enableColumnFilters={enableColumnFilters}
                     enableGlobalFilterModes={enableGlobalFilterModes} // Global Filter Mode Property like Fuzzy Filter etc. 
-                    globalFilterFn="contains"
+                    globalFilterFn={globalFilterFn}
                     enableFilterMatchHighlighting={enableFilterMatchHighlighting} // Filter Match Highlighting Property
                     enableColumnFilterModes // Column Filter Mode Property
                     muiTableHeadCellFilterTextFieldProps={{ //Column Box Style 

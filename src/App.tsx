@@ -31,6 +31,7 @@ const configuration = {
     enableGlobalFilter: false, // Global Filter Property,
     enableGlobalFilterModes: false, // Global Filter Mode Property
     globalFilterFn: 'contains', // Global Filter
+    filterFn: 'startsWith', // Individual Column Filter
     enableDensityToggle: false, // Enable density toggle padding property
     enableFullScreenToggle: false, // Enable full screen toggle property
     enableRowVirtualization: false, // Enable row virtualization
@@ -38,8 +39,10 @@ const configuration = {
   columnConfig: [
     {
       header: 'image',
-      enableColumnFilter: false,
+      // enableColumnFilter: false,
       enableSorting: false,
+      filterFn: 'contains',
+      Cell: ({ cell }: { cell: any; }) => <img src={cell.getValue()} width={30} />
     },
     {
       header: 'height',
@@ -50,6 +53,15 @@ const configuration = {
       header: 'eyeColor',
       enableColumnFilter: false,
       enableSorting: false,
+      Cell: ({ cell }: { cell: any; }) => (
+        <p
+          style={{
+            backgroundColor: cell.getValue(),
+          }}
+          className='colorBox'
+        >
+          &nbsp;
+        </p>)
     }
   ]
 

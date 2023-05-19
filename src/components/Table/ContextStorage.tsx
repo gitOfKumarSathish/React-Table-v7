@@ -22,6 +22,7 @@ function ContextStorage() {
         enableSorting,
         enableGlobalFilter,
         globalFilterFn,
+        filterFn,
         enableDensityToggle,
         enableFullScreenToggle,
         enableRowVirtualization
@@ -47,6 +48,8 @@ function ContextStorage() {
     enableFullScreenToggle = enableFullScreenToggle === false ? false : true;
     enableRowVirtualization = enableRowVirtualization === false ? false : true;
     globalFilterFn = globalFilterFn || 'contains';
+    filterFn = filterFn || 'contains';
+
 
     return {
         enablePinning,
@@ -66,6 +69,7 @@ function ContextStorage() {
         enableSorting,
         enableGlobalFilter,
         globalFilterFn,
+        filterFn,
         enableDensityToggle,
         enableFullScreenToggle,
         enableRowVirtualization
