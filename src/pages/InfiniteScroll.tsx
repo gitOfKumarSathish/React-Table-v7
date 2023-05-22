@@ -38,8 +38,9 @@ const InfiniteScroll = ({ config }: any) => {
 
     const columnConfigurations = config.columnConfig;
 
-    const { fetchSize, endPoint, dataKey } = config.apiHandler || {};
-    console.log({ fetchSize, endPoint, dataKey });
+    const { fetchSize, endPoint, } = config.apiHandler || {};
+    const endPointConverter = endPoint.split('/');
+    const dataKey = endPointConverter[endPointConverter.length - 1];
     const globalConfig = useGlobalConfig(config.globalConfig);
     const {
         enablePinning,

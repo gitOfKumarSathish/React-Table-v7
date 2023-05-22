@@ -190,7 +190,7 @@ function LocalDataTable({ config }: any) {
 
                     enableRowVirtualization={enableRowVirtualization} //optional, but recommended if it is likely going to be more than 100 rows
                     rowVirtualizerInstanceRef={rowVirtualizerInstanceRef} //get access to the virtualizer instance
-                    rowVirtualizerProps={{ overscan: 20 }}
+                // rowVirtualizerProps={{ overscan: 20 }}
                 />
             }</section>
         </>
