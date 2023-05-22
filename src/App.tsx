@@ -34,7 +34,7 @@ const configuration = {
     filterFn: 'startsWith', // Individual Column Filter
     enableDensityToggle: false, // Enable density toggle padding property
     enableFullScreenToggle: false, // Enable full screen toggle property
-    enableRowVirtualization: false, // Enable row virtualization
+    enableRowVirtualization: true, // Enable row virtualization
   },
   columnConfig: [
     {

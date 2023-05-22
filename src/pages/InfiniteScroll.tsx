@@ -240,7 +240,7 @@ const InfiniteScroll = () => {
 
                     enableRowVirtualization={enableRowVirtualization} //optional, but recommended if it is likely going to be more than 100 rows
                     rowVirtualizerInstanceRef={rowVirtualizerInstanceRef} //get access to the virtualizer instance
-                    rowVirtualizerProps={{ overscan: 25, estimateSize: () => 100, }}
+                    rowVirtualizerProps={{ overscan: 0 }}
                 />
             }</section>
         </>
