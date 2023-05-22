@@ -3,6 +3,7 @@ import axios from 'axios';
 import './App.css';
 
 import InfiniteScroll from './pages/InfiniteScroll';
+import { Box, IconButton, Tooltip, Typography, Zoom, CircularProgress } from '@mui/material';
 
 axios.defaults.baseURL = 'https://dummyjson.com/';
 
@@ -37,6 +38,18 @@ const configuration = {
     enableFullScreenToggle: false, // Enable full screen toggle property
     enableRowVirtualization: true, // Enable row virtualization
     hideColumnsDefault: ["hair", "address", "bank", "company"] // Hide columns default
+  },
+  rowExpandedDetails: ({ row }) => {
+    const { cardExpire, cardNumber, cardType, currency } = row.original.bank;
+    return (
+      (row.original &&
+        <Box className="row-expand" >
+          <Typography><b>cardExpire:</b> {cardExpire}</Typography>
+          <Typography><b>Card Number:</b> {cardNumber}</Typography>
+          <Typography><b>Card Type:</b> {cardType}</Typography>
+          <Typography><b>currency:</b> {currency}</Typography>
+        </Box>)
+    );
   },
   columnConfig: [
     {
@@ -97,8 +110,14 @@ const configuration2 = {
     // enableDensityToggle: false, // Enable density toggle padding property
     // enableFullScreenToggle: false, // Enable full screen toggle property
     // enableRowVirtualization: true, // Enable row virtualization,
-    hideColumnsDefault: ["images"] // Hide columns default
+    hideColumnsDefault: ["images", , "description"] // Hide columns default
   },
+
+  // rowExpandedDetails: ({ row }) => {
+  //   const { description } = row.original;
+  //   console.log('row', row.original);
+  //   return <p>{description}</p>;
+  // },
   columnConfig: [
     {
       header: 'thumbnail',
@@ -227,9 +246,9 @@ function App() {
   return (
     <>
 
-      {/* <InfiniteScroll config={configuration} />
-      <InfiniteScroll config={configuration2} /> */}
-      <InfiniteScroll config={configuration3} />
+      {/* {/* <InfiniteScroll config={configuration} /> */}
+      <InfiniteScroll config={configuration2} />
+      {/* <InfiniteScroll config={configuration3} /> */}
     </>
   );
 }

@@ -140,7 +140,8 @@ const InfiniteScroll = ({ config }: any) => {
                     enableStickyHeader={enableStickyHeader} // Set the sticky header property
 
                     enableExpandAll={enableExpandAll} //Row Expand All Property
-                    renderDetailPanel={({ row }) => (<InfiniteRowExpand row={row} />)} //Row Expand Component
+                    renderDetailPanel={config.rowExpandedDetails || null} //Row Expand Component
+                    // renderDetailPanel={({ row }) => (<InfiniteRowExpand row={row} />)} //Row Expand Component
 
                     muiTableBodyProps={({ table }): any => {
                         ColumnStore(table);
