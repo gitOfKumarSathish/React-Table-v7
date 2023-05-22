@@ -2,13 +2,8 @@ import axios from "axios";
 import { MRT_ColumnFiltersState, MRT_SortingState } from "material-react-table";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { UserApiResponse } from "../../assets/Interfaces";
-import { ConfigContext } from "../../App";
-import React, { useContext } from "react";
 
-export function APIDataFetching(columnFilters: MRT_ColumnFiltersState, globalFilter: any, sorting: MRT_SortingState) {
-    const config: any = useContext(ConfigContext);
-    const { fetchSize, endPoint } = config.apiHandler;
-
+export function APIDataFetching(columnFilters: MRT_ColumnFiltersState, globalFilter: any, sorting: MRT_SortingState, fetchSize: number, endPoint: string) {
     return useInfiniteQuery<UserApiResponse>({
         queryKey: ['table-data', columnFilters, globalFilter, sorting],
         queryFn: async ({ pageParam = 0 }) => {

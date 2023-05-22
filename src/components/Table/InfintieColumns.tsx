@@ -11,9 +11,10 @@ interface IColumn {
 }
 
 
-export function InfintieColumns(data: any[], columnConfigurations: any = [], defaultColumnFilter: string): ColumnType[] {
+export function InfintieColumns(data: any[], columnConfigurations: any = [], defaultColumnFilter: string, hideColumnsDefault: string[] = []): ColumnType[] {
+    console.log('hideColumnsDefault', hideColumnsDefault);
     const columnKeys = Object.keys(data).filter(
-        key => !["hair", "address", "bank", "company"].includes(key)
+        (key: string) => !hideColumnsDefault.includes(key)
     );
     return columnKeys.map((columnName) => {
         let column: IColumn = {

@@ -24,12 +24,13 @@ import { InfintieColumns } from '../components/Table/InfintieColumns';
 import InfiniteRowExpand from '../components/Table/InfiniteRowExpand';
 import { APIDataFetching } from '../components/Table/InfiniteAPI';
 import ColumnStore from '../components/Table/ColumnStore';
-import ContextStorage from '../components/Table/ContextStorage';
-import { ConfigContext } from '../App';
+import useGlobalConfig from '../components/Table/useGlobalConfig';
 
-const InfiniteScroll = () => {
-    const config: any = useContext(ConfigContext);
+const InfiniteScroll = ({ config }: any) => {
+    // const config: any = useContext(ConfigContext);
     const columnConfigurations = config.columnConfig;
+    const { fetchSize, endPoint } = config.apiHandler;
+    // console.log('config', config.globalConfig);
     const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState<string>();
     const [sorting, setSorting] = useState<MRT_SortingState>([]);
@@ -42,9 +43,15 @@ const InfiniteScroll = () => {
     const rowVirtualizerInstanceRef = useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null); //we can get access to the underlying Virtualizer instance and call its scrollToIndex method
 
     // Query Handling  
-    const { data, fetchNextPage, isError, isFetching, isLoading } = APIDataFetching(columnFilters, globalFilter, sorting);
+    const { data, fetchNextPage, isError, isFetching, isLoading } = APIDataFetching(columnFilters, globalFilter, sorting, fetchSize, endPoint);
 
-    console.log('ContextStorage', ContextStorage());
+    // console.log('ContextStorage', ContextStorage());
+
+
+    // }: any = ContextStorage();
+
+    const globalConfig = useGlobalConfig(config.globalConfig);
+
     const {
         enablePinning,
         enableRowSelection,
@@ -66,9 +73,10 @@ const InfiniteScroll = () => {
         enableFullScreenToggle,
         enableRowVirtualization,
         globalFilterFn,
-        filterFn
-    }: any = ContextStorage();
-
+        filterFn,
+        hideColumnsDefault
+    }: any = globalConfig;
+    console.log('globalConfig', globalConfig);
     // Preparing Table Data
     let flatData = useMemo(() => {
         if (!data) return [];
@@ -81,7 +89,7 @@ const InfiniteScroll = () => {
     const columns: MRT_ColumnDef<any>[] = useMemo(() => {
         if (!data) return [];
         const firstUser = data?.pages[0].users?.[0];
-        return InfintieColumns(firstUser, columnConfigurations, filterFn);
+        return InfintieColumns(firstUser, columnConfigurations, filterFn, hideColumnsDefault);
     }, [data]);
 
 
