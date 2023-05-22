@@ -11,8 +11,7 @@ interface IColumn {
 }
 
 
-export function InfintieColumns(data: any[], columnConfigurations: any = [], defaultColumnFilter: string, hideColumnsDefault: string[] = []): ColumnType[] {
-    console.log('hideColumnsDefault', hideColumnsDefault);
+export function InfintieColumns(data: any[] = [], columnConfigurations: any = [], defaultColumnFilter: string, hideColumnsDefault: string[] = []): ColumnType[] {
     const columnKeys = Object.keys(data).filter(
         (key: string) => !hideColumnsDefault.includes(key)
     );
@@ -28,12 +27,10 @@ export function InfintieColumns(data: any[], columnConfigurations: any = [], def
                 const matchingHeaderProps = columnConfigurations[i];
                 for (const key in matchingHeaderProps) {
                     if (Object.prototype.hasOwnProperty.call(matchingHeaderProps, key)) {
-                        const element = matchingHeaderProps[key];
                         const cc = {
                             [key]: matchingHeaderProps[key],
                         };
                         column = { ...column, ...cc };
-                        console.log('element', element, cc);
                     }
                 }
             }

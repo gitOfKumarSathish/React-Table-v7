@@ -3,11 +3,11 @@ import { MRT_ColumnFiltersState, MRT_SortingState } from "material-react-table";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { UserApiResponse } from "../../assets/Interfaces";
 
-export function APIDataFetching(columnFilters: MRT_ColumnFiltersState, globalFilter: any, sorting: MRT_SortingState, fetchSize: number, endPoint: string) {
+export function APIDataFetching(columnFilters: MRT_ColumnFiltersState, globalFilter: any, sorting: MRT_SortingState, fetchSize: number, endPoint: string, dataKey: String) {
     return useInfiniteQuery<UserApiResponse>({
-        queryKey: ['table-data', columnFilters, globalFilter, sorting],
+        queryKey: [dataKey, columnFilters, globalFilter, sorting],
         queryFn: async ({ pageParam = 0 }) => {
-            const baseUrl = endPoint!;
+            const baseUrl = endPoint;
             const params = new URLSearchParams();
 
             params.set('start', `${pageParam * fetchSize}`);

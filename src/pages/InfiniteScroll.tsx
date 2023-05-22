@@ -29,7 +29,7 @@ import useGlobalConfig from '../components/Table/useGlobalConfig';
 const InfiniteScroll = ({ config }: any) => {
     // const config: any = useContext(ConfigContext);
     const columnConfigurations = config.columnConfig;
-    const { fetchSize, endPoint } = config.apiHandler;
+    const { fetchSize, endPoint, dataKey } = config.apiHandler;
     // console.log('config', config.globalConfig);
     const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState<string>();
@@ -43,12 +43,7 @@ const InfiniteScroll = ({ config }: any) => {
     const rowVirtualizerInstanceRef = useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null); //we can get access to the underlying Virtualizer instance and call its scrollToIndex method
 
     // Query Handling  
-    const { data, fetchNextPage, isError, isFetching, isLoading } = APIDataFetching(columnFilters, globalFilter, sorting, fetchSize, endPoint);
-
-    // console.log('ContextStorage', ContextStorage());
-
-
-    // }: any = ContextStorage();
+    const { data, fetchNextPage, isError, isFetching, isLoading } = APIDataFetching(columnFilters, globalFilter, sorting, fetchSize, endPoint, dataKey);
 
     const globalConfig = useGlobalConfig(config.globalConfig);
 
@@ -76,20 +71,19 @@ const InfiniteScroll = ({ config }: any) => {
         filterFn,
         hideColumnsDefault
     }: any = globalConfig;
-    console.log('globalConfig', globalConfig);
     // Preparing Table Data
     let flatData = useMemo(() => {
         if (!data) return [];
-        const users = data.pages.flatMap((page: { users: any; }) => page.users);
-        setFlatRowData(users);
-        return users;
+        const tableData = data.pages.flatMap((page: any) => page[dataKey]);
+        setFlatRowData(tableData);
+        return tableData;
     }, [data]);
 
     // Column headers creation
     const columns: MRT_ColumnDef<any>[] = useMemo(() => {
         if (!data) return [];
-        const firstUser = data?.pages[0].users?.[0];
-        return InfintieColumns(firstUser, columnConfigurations, filterFn, hideColumnsDefault);
+        const firstRow = (data?.pages[0]?.[dataKey]?.[0]);
+        return InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
     }, [data]);
 
 
@@ -238,7 +232,7 @@ const InfiniteScroll = ({ config }: any) => {
                     })}
 
                     initialState={{ // initial state or DefaultState when initially Loading the Table
-                        columnVisibility: JSON.parse(localStorage.getItem('hiddenColumn') || '{}'),
+                        // columnVisibility: JSON.parse(localStorage.getItem('hiddenColumn') || '{}'),
                         showColumnFilters: false,
                     }}
 

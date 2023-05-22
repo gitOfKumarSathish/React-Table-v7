@@ -22,7 +22,7 @@ function useGlobalConfig(props: { enablePinning: any; enableRowSelection: any; e
         enableDensityToggle,
         enableFullScreenToggle,
         enableRowVirtualization,
-        hideColumnsDefault
+        hideColumnsDefault,
     } = props;
 
 
