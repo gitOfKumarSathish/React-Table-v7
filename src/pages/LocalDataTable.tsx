@@ -34,6 +34,7 @@ function LocalDataTable({ config }: any) {
 
     const columnConfigurations = config.columnConfig;
     const data = config.data;
+    const dataKey = config.dataKey;
 
 
     const globalConfig = useGlobalConfig(config.globalConfig);
@@ -109,7 +110,7 @@ function LocalDataTable({ config }: any) {
                     // renderDetailPanel={({ row }) => (<InfiniteRowExpand row={row} />)} //Row Expand Component
 
                     muiTableBodyProps={({ table }): any => {
-                        ColumnStore(table);
+                        ColumnStore(table, dataKey);
                     }}
                     enableSorting={enableSorting}
 
@@ -180,7 +181,7 @@ function LocalDataTable({ config }: any) {
                     })}
 
                     initialState={{ // initial state or DefaultState when initially Loading the Table
-                        // columnVisibility: JSON.parse(localStorage.getItem('hiddenColumn') || '{}'),
+                        columnVisibility: JSON.parse(localStorage.getItem(`${dataKey} hiddenColumn`) || '{}'),
                         showColumnFilters: false,
                     }}
 

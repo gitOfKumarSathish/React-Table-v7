@@ -9,11 +9,11 @@ type HiddenColumns = {
     [key: string]: boolean;
 };
 
-function ColumnStore(table: any) {
+function ColumnStore(table: any, dataKey: string) {
     useEffect(() => {
         let fl = table.getAllFlatColumns();
         const newHidden = getHiddenColumn(fl);
-        localStorage.setItem('hiddenColumn', JSON.stringify(newHidden));
+        localStorage.setItem(`${dataKey} hiddenColumn`, JSON.stringify(newHidden));
     }, [table]);
 
     function getHiddenColumn(columns: Column[]): HiddenColumns {

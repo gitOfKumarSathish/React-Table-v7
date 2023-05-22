@@ -65,8 +65,9 @@ type ColumnType = {
 
 interface UserApiResponse {
     total: number;
-    users: any[];
+    users?: any[];
     limit: number;
+    products?: any[];
 }
 
 export type {

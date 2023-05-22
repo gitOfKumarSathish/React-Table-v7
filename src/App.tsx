@@ -10,7 +10,7 @@ const configuration = {
   apiHandler: {
     endPoint: 'https://dummyjson.com/users', // API endpoint
     fetchSize: 25, // Fetch Data count
-    dataKey: 'users' // Mandatory Unique identifier key for the api response to get data, Based on the Key we get value
+    dataKey: 'users' // Mandatory Unique identifier key for the api response to get data, Based on the Key we get value, Also to store column in local storage.
   },
   globalConfig: {
     enablePinning: false,
@@ -83,7 +83,7 @@ const configuration2 = {
   apiHandler: {
     endPoint: 'https://dummyjson.com/products', // API endpoint
     fetchSize: 50,  // Fetch Data count
-    dataKey: 'products' // Mandatory Unique identifier key for the api response to get data, Based on the Key we get value
+    dataKey: 'products' // Mandatory Unique identifier key for the api response to get data, Based on the Key we get value Also to store column in local storage.
   },
   globalConfig: {
     // enablePinning: false,
@@ -166,6 +166,7 @@ const configuration2 = {
 
 const configuration3 = {
   data: APIresponse.data, // Local Data for the Table
+  dataKey: "data", // To Store in LocalStorage
   globalConfig: {
     // enablePinning: false,
     // enableRowSelection: false,
