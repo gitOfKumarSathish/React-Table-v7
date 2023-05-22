@@ -8,9 +8,9 @@ import LocalDataTable from './pages/LocalDataTable';
 
 const configuration = {
   apiHandler: {
-    endPoint: 'https://dummyjson.com/users/',
-    fetchSize: 25,
-    dataKey: 'users'
+    endPoint: 'https://dummyjson.com/users', // API endpoint
+    fetchSize: 25, // Fetch Data count
+    dataKey: 'users' // Mandatory Unique identifier key for the api response to get data, Based on the Key we get value
   },
   globalConfig: {
     enablePinning: false,
@@ -81,9 +81,9 @@ const configuration = {
 
 const configuration2 = {
   apiHandler: {
-    endPoint: 'https://dummyjson.com/products/',
-    fetchSize: 50,
-    dataKey: 'products'
+    endPoint: 'https://dummyjson.com/products', // API endpoint
+    fetchSize: 50,  // Fetch Data count
+    dataKey: 'products' // Mandatory Unique identifier key for the api response to get data, Based on the Key we get value
   },
   globalConfig: {
     // enablePinning: false,
@@ -165,7 +165,7 @@ const configuration2 = {
 
 
 const configuration3 = {
-  data: APIresponse.data,
+  data: APIresponse.data, // Local Data for the Table
   globalConfig: {
     // enablePinning: false,
     // enableRowSelection: false,
