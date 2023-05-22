@@ -27,10 +27,6 @@ import ColumnStore from '../components/Table/ColumnStore';
 import useGlobalConfig from '../components/Table/useGlobalConfig';
 
 const InfiniteScroll = ({ config }: any) => {
-    // const config: any = useContext(ConfigContext);
-    const columnConfigurations = config.columnConfig;
-    const { fetchSize, endPoint, dataKey } = config.apiHandler;
-    // console.log('config', config.globalConfig);
     const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState<string>();
     const [sorting, setSorting] = useState<MRT_SortingState>([]);
@@ -42,11 +38,11 @@ const InfiniteScroll = ({ config }: any) => {
 
     const rowVirtualizerInstanceRef = useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null); //we can get access to the underlying Virtualizer instance and call its scrollToIndex method
 
-    // Query Handling  
-    const { data, fetchNextPage, isError, isFetching, isLoading } = APIDataFetching(columnFilters, globalFilter, sorting, fetchSize, endPoint, dataKey);
+    const columnConfigurations = config.columnConfig;
 
+    const { fetchSize, endPoint, dataKey } = config.apiHandler || {};
+    console.log({ fetchSize, endPoint, dataKey });
     const globalConfig = useGlobalConfig(config.globalConfig);
-
     const {
         enablePinning,
         enableRowSelection,
@@ -71,6 +67,10 @@ const InfiniteScroll = ({ config }: any) => {
         filterFn,
         hideColumnsDefault
     }: any = globalConfig;
+
+    // Query Handling  
+    const { data, fetchNextPage, isError, isFetching, isLoading } = APIDataFetching(columnFilters, globalFilter, sorting, fetchSize, endPoint, dataKey);
+
     // Preparing Table Data
     let flatData = useMemo(() => {
         if (!data) return [];
