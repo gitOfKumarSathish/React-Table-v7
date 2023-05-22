@@ -1,7 +1,4 @@
 import {
-    UIEvent,
-    memo,
-    useCallback,
     useEffect,
     useMemo,
     useRef,
@@ -16,15 +13,14 @@ import MaterialReactTable, {
     MRT_Row,
 
 } from 'material-react-table';
-import { Box, IconButton, Tooltip, Typography, Zoom, CircularProgress } from '@mui/material';
+import { Box, IconButton, Tooltip, Zoom } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 
 import { InfintieColumns } from '../components/Table/InfintieColumns';
-import { APIDataFetching } from '../components/Table/InfiniteAPI';
 import ColumnStore from '../components/Table/ColumnStore';
 import useGlobalConfig from '../components/Table/useGlobalConfig';
 
-const InfiniteScroll = ({ config }: any) => {
+function LocalDataTable({ config }: any) {
     const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState<string>();
     const [sorting, setSorting] = useState<MRT_SortingState>([]);
@@ -37,9 +33,9 @@ const InfiniteScroll = ({ config }: any) => {
     const rowVirtualizerInstanceRef = useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null); //we can get access to the underlying Virtualizer instance and call its scrollToIndex method
 
     const columnConfigurations = config.columnConfig;
+    const data = config.data;
 
-    const { fetchSize, endPoint, dataKey } = config.apiHandler || {};
-    console.log({ fetchSize, endPoint, dataKey });
+
     const globalConfig = useGlobalConfig(config.globalConfig);
     const {
         enablePinning,
@@ -66,13 +62,11 @@ const InfiniteScroll = ({ config }: any) => {
         hideColumnsDefault
     }: any = globalConfig;
 
-    // Query Handling  
-    const { data, fetchNextPage, isError, isFetching, isLoading } = APIDataFetching(columnFilters, globalFilter, sorting, fetchSize, endPoint, dataKey);
 
     // Preparing Table Data
     let flatData = useMemo(() => {
         if (!data) return [];
-        const tableData = data.pages.flatMap((page: any) => page[dataKey]);
+        const tableData = data;
         setFlatRowData(tableData);
         return tableData;
     }, [data]);
@@ -80,31 +74,9 @@ const InfiniteScroll = ({ config }: any) => {
     // Column headers creation
     const columns: MRT_ColumnDef<any>[] = useMemo(() => {
         if (!data) return [];
-        const firstRow = (data?.pages[0]?.[dataKey]?.[0]);
+        const firstRow = (data[0]);
         return InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
     }, [data]);
-
-
-    const totalDBRowCount = data?.pages?.[0].total ?? 0;
-    const totalFetched = flatRowData.length;
-
-    //called on scroll and possibly on mount to fetch more data as the user scrolls and reaches bottom of table
-    const fetchMoreOnBottomReached = useCallback(
-        (containerRefElement?: HTMLDivElement | null) => {
-            if (containerRefElement) {
-                const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
-                //once the user has scrolled within 400px of the bottom of the table, fetch more data if we can
-                if (
-                    scrollHeight - scrollTop - clientHeight < 400 &&
-                    !isFetching &&
-                    totalFetched < totalDBRowCount
-                ) {
-                    fetchNextPage();
-                }
-            }
-        },
-        [fetchNextPage, isFetching, totalFetched, totalDBRowCount],
-    );
 
     //scroll to top of table when sorting or filters change
     useEffect(() => {
@@ -117,15 +89,10 @@ const InfiniteScroll = ({ config }: any) => {
         }
     }, [sorting, columnFilters, globalFilter]);
 
-    //a check on mount to see if the table is already scrolled to the bottom and immediately needs to fetch more data
-    useEffect(() => {
-        fetchMoreOnBottomReached(tableContainerRef.current);
-    }, [fetchMoreOnBottomReached]);
 
-    if (isLoading) return <div><CircularProgress /> <h3>  Loading...</h3></div>;
     return (
         <>
-            <section> {!isLoading &&
+            <section> {
                 <MaterialReactTable
                     columns={columns} // Columns For Table 
                     data={flatRowData} // Data For Table 
@@ -169,30 +136,12 @@ const InfiniteScroll = ({ config }: any) => {
                     muiTableContainerProps={{
                         ref: tableContainerRef, //get access to the table container element
                         sx: { maxHeight: '450px' }, //give the table a max height
-                        onScroll: (
-                            event: UIEvent<HTMLDivElement>, //add an event listener to the table container element
-                        ) => fetchMoreOnBottomReached(event.target as HTMLDivElement),
                     }}
 
-                    muiToolbarAlertBannerProps={ // Error Handling for Data
-                        isError
-                            ? {
-                                color: 'error',
-                                children: 'Error loading data',
-                            }
-                            : undefined
-                    }
                     onColumnFiltersChange={setColumnFilters}
                     onGlobalFilterChange={setGlobalFilter}
                     onSortingChange={setSorting}
 
-                    renderBottomToolbarCustomActions={() => ( // Rows fetched from the server along with total number of Rows in the table
-                        <Typography>
-                            Fetched {totalFetched} of {totalDBRowCount} total rows.
-                        </Typography>
-                    )}
-
-                    getRowId={(row) => row?.name} //give each row Original Data  
                     onRowSelectionChange={setRowSelection} //connect internal row selection state to your own
 
 
@@ -206,9 +155,9 @@ const InfiniteScroll = ({ config }: any) => {
                     state={{ // State of the table
                         columnFilters,
                         globalFilter,
-                        isLoading,
-                        showAlertBanner: isError,
-                        showProgressBars: isFetching,
+                        // isLoading,
+                        // showAlertBanner: isError,
+                        // showProgressBars: isFetching,
                         sorting,
                         density: 'compact',
                         rowSelection
@@ -241,19 +190,15 @@ const InfiniteScroll = ({ config }: any) => {
 
                     enableRowVirtualization={enableRowVirtualization} //optional, but recommended if it is likely going to be more than 100 rows
                     rowVirtualizerInstanceRef={rowVirtualizerInstanceRef} //get access to the virtualizer instance
-                    rowVirtualizerProps={{ overscan: 0 }}
+                    rowVirtualizerProps={{ overscan: 25 }}
                 />
             }</section>
         </>
     );
-};
 
-export default memo(InfiniteScroll);
+}
 
-
-
-
-
+export default LocalDataTable;
 function CustomInfoButton() {
     return <Box>
         <Tooltip TransitionComponent={Zoom} title="To perform multiple sorting, please press and hold down the Shift key.">
@@ -263,4 +208,3 @@ function CustomInfoButton() {
         </Tooltip>
     </Box>;
 }
-

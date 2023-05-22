@@ -1,13 +1,10 @@
-import { createContext, memo } from 'react';
-import axios from 'axios';
+import { memo } from 'react';
 import './App.css';
 
 import InfiniteScroll from './pages/InfiniteScroll';
-import { Box, IconButton, Tooltip, Typography, Zoom, CircularProgress } from '@mui/material';
-
-axios.defaults.baseURL = 'https://dummyjson.com/';
-
-export const ConfigContext = createContext({});
+import { Box, Typography } from '@mui/material';
+import { APIresponse } from './assets/sample';
+import LocalDataTable from './pages/LocalDataTable';
 
 const configuration = {
   apiHandler: {
@@ -39,7 +36,7 @@ const configuration = {
     enableRowVirtualization: true, // Enable row virtualization
     hideColumnsDefault: ["hair", "address", "bank", "company"] // Hide columns default
   },
-  rowExpandedDetails: ({ row }) => {
+  rowExpandedDetails: ({ row }: any) => {
     const { cardExpire, cardNumber, cardType, currency } = row.original.bank;
     return (
       (row.original &&
@@ -113,7 +110,7 @@ const configuration2 = {
     hideColumnsDefault: ["images", , "description"] // Hide columns default
   },
 
-  // rowExpandedDetails: ({ row }) => {
+  // rowExpandedDetails: ({ row }:any) => {
   //   const { description } = row.original;
   //   console.log('row', row.original);
   //   return <p>{description}</p>;
@@ -134,7 +131,6 @@ const configuration2 = {
     {
       header: 'title',
       Cell: ({ cell }: { cell: any; }) => {
-        console.log('cell', cell.row.original.category === "smartphones");
         return (<p
           style={{
             color: colorCodes(),
@@ -169,6 +165,7 @@ const configuration2 = {
 
 
 const configuration3 = {
+  data: APIresponse.data,
   globalConfig: {
     // enablePinning: false,
     // enableRowSelection: false,
@@ -191,52 +188,37 @@ const configuration3 = {
     // enableDensityToggle: false, // Enable density toggle padding property
     // enableFullScreenToggle: false, // Enable full screen toggle property
     // enableRowVirtualization: true, // Enable row virtualization,
-    hideColumnsDefault: ["images"] // Hide columns default
+    hideColumnsDefault: ["about"] // Hide columns default
+  },
+  rowExpandedDetails: ({ row }: any) => {
+    const { about } = row.original;
+    console.log('row', row.original);
+    return <p>{about}</p>;
   },
   columnConfig: [
     {
-      header: 'thumbnail',
+      header: 'picture',
       enableColumnFilter: false,
       enableSorting: false,
       filterFn: 'contains',
       Cell: ({ cell }: { cell: any; }) => <img src={cell.getValue()} width={30} />
     },
     {
-      header: 'height',
+      header: 'eyeColor',
       enableColumnFilter: false,
       enableSorting: false,
-    },
-    {
-      header: 'title',
-      Cell: ({ cell }: { cell: any; }) => {
-        console.log('cell', cell.row.original.category === "smartphones");
-        return (<p
+      Cell: ({ cell }: { cell: any; }) => (
+        <p
           style={{
-            color: colorCodes(),
+            backgroundColor: cell.getValue(),
           }}
-        // className='colorBox'
-        >{cell.getValue()}</p>);
-
-
-        function colorCodes() {
-          // return cell.row.original.category === "smartphones" ? "Red" : "Green";
-          switch (cell.row.original.category) {
-            case "smartphones":
-              return "Red";
-              break;
-            case "laptops":
-              return "yellow";
-              break;
-            case "skincare":
-              return "green";
-              break;
-            default:
-              return "black";
-              break;
-          }
-        }
-      }
+          className='colorBox'
+        >
+          &nbsp;
+        </p>)
     }
+
+
   ]
 
 };
@@ -245,10 +227,9 @@ function App() {
 
   return (
     <>
-
-      {/* {/* <InfiniteScroll config={configuration} /> */}
+      <InfiniteScroll config={configuration} />
       <InfiniteScroll config={configuration2} />
-      {/* <InfiniteScroll config={configuration3} /> */}
+      <LocalDataTable config={configuration3} />
     </>
   );
 }
