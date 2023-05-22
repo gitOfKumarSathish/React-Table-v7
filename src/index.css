@@ -41,6 +41,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  scroll-behavior: smooth;
 }
 
 h1 {
@@ -84,6 +85,10 @@ button:focus-visible {
   }
 }
 
+table {
+
+  scroll-behavior: smooth;
+}
 
 .resizer {
   display: inline-block;
@@ -105,7 +110,7 @@ tr.highlightMe {
   background: #ccc !important;
 }
 
-.colorCell p {
+p.colorBox {
   width: 25px;
   text-align: center;
   margin: 0 auto;
@@ -165,4 +170,16 @@ p.lineInfo {
 
 .css-apqrd9-MuiTableBody-root {
   text-align: left;
+}
+
+.Mui-TableHeadCell-Content-Labels {
+  text-transform: capitalize;
+}
+
+.row-expand {
+  display: flex;
+  justify-content: space-between;
+  width: 25%;
+  text-align: left;
+  flex-direction: column;
 }

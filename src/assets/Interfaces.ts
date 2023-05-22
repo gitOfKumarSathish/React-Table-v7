@@ -56,13 +56,19 @@ interface Info {
 }
 
 type ColumnType = {
-    Header: string;
-    accessor: string;
-    disableSortBy?: boolean;
+    header: string;
+    accessorKey: string;
+    enableSorting?: boolean;
     Cell?: any;
     className?: string;
 };
 
+interface UserApiResponse {
+    total: number;
+    users?: any[];
+    limit: number;
+    products?: any[];
+}
 
 export type {
     IData,
@@ -75,7 +81,8 @@ export type {
     SortingDisableType,
     ColumnType,
     RowProps,
-    Info
+    Info,
+    UserApiResponse
 };
 
 
