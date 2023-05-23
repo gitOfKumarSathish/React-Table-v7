@@ -230,7 +230,8 @@ function App() {
     <>
       <InfiniteScroll config={configuration} />
       <InfiniteScroll config={configuration2} />
-      <LocalDataTable config={configuration3} />
+      <InfiniteScroll config={configuration3} />
+      {/* <LocalDataTable config={configuration3} /> */}
     </>
   );
 }

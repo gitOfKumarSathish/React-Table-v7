@@ -24,6 +24,15 @@ import { APIDataFetching } from '../components/Table/InfiniteAPI';
 import ColumnStore from '../components/Table/ColumnStore';
 import useGlobalConfig from '../components/Table/useGlobalConfig';
 
+let flatData: any[];
+let columns: MRT_ColumnDef<any>[];
+let isLoading: boolean;
+let isFetching: boolean;
+let isError: boolean;
+let totalDBRowCount: number;
+let totalFetched: number;
+let fetchMoreOnBottomReached: any;
+
 const InfiniteScroll = ({ config }: any) => {
     const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState<string>();
@@ -39,8 +48,9 @@ const InfiniteScroll = ({ config }: any) => {
     const columnConfigurations = config.columnConfig;
 
     const { fetchSize, endPoint, } = config.apiHandler || {};
-    const endPointConverter = endPoint.split('/');
-    const dataKey = endPointConverter[endPointConverter.length - 1];
+    if (config.apiHandler && config?.apiHandler?.endPoint) { }
+    const endPointConverter = endPoint?.split('/') || [];
+    const dataKey = endPointConverter ? endPointConverter[endPointConverter.length - 1] : config.dataKey;
     const globalConfig = useGlobalConfig(config.globalConfig);
     const {
         enablePinning,
@@ -67,45 +77,77 @@ const InfiniteScroll = ({ config }: any) => {
         hideColumnsDefault
     }: any = globalConfig;
 
-    // Query Handling  
-    const { data, fetchNextPage, isError, isFetching, isLoading } = APIDataFetching(columnFilters, globalFilter, sorting, fetchSize, endPoint, dataKey);
-
-    // Preparing Table Data
-    let flatData = useMemo(() => {
-        if (!data) return [];
-        const tableData = data.pages.flatMap((page: any) => page[dataKey]);
-        setFlatRowData(tableData);
-        return tableData;
-    }, [data]);
-
-    // Column headers creation
-    const columns: MRT_ColumnDef<any>[] = useMemo(() => {
-        if (!data) return [];
-        const firstRow = (data?.pages[0]?.[dataKey]?.[0]);
-        return InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
-    }, [data]);
 
 
-    const totalDBRowCount = data?.pages?.[0].total ?? 0;
-    const totalFetched = flatRowData.length;
+    if (config.apiHandler && config?.apiHandler?.endPoint) {
+        // Query Handling  
+        const apiResponse = APIDataFetching(columnFilters, globalFilter, sorting, fetchSize, endPoint, dataKey);
+        const { data, fetchNextPage } = apiResponse;
+        isLoading = apiResponse.isLoading;
+        isFetching = apiResponse.isFetching;
+        isError = apiResponse.isError;
+        // const { data, fetchNextPage, isError, isFetching, isLoading } = APIDataFetching(columnFilters, globalFilter, sorting, fetchSize, endPoint, dataKey);
+        flatData = useMemo(() => {
+            if (!data) return [];
+            const tableData = data.pages.flatMap((page: any) => page[dataKey]);
+            setFlatRowData(tableData);
+            return tableData;
+        }, [data]);
 
-    //called on scroll and possibly on mount to fetch more data as the user scrolls and reaches bottom of table
-    const fetchMoreOnBottomReached = useCallback(
-        (containerRefElement?: HTMLDivElement | null) => {
-            if (containerRefElement) {
-                const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
-                //once the user has scrolled within 400px of the bottom of the table, fetch more data if we can
-                if (
-                    scrollHeight - scrollTop - clientHeight < 400 &&
-                    !isFetching &&
-                    totalFetched < totalDBRowCount
-                ) {
-                    fetchNextPage();
+        columns = useMemo(() => {
+            if (!data) return [];
+            const firstRow = (data?.pages[0]?.[dataKey]?.[0]);
+            return InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
+        }, [data]);
+
+        totalDBRowCount = data?.pages?.[0].total ?? 0;
+        totalFetched = flatRowData.length;
+
+        //called on scroll and possibly on mount to fetch more data as the user scrolls and reaches bottom of table
+        fetchMoreOnBottomReached = useCallback(
+            (containerRefElement?: HTMLDivElement | null) => {
+                if (containerRefElement) {
+                    const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
+                    //once the user has scrolled within 400px of the bottom of the table, fetch more data if we can
+                    if (
+                        scrollHeight - scrollTop - clientHeight < 400 &&
+                        !isFetching &&
+                        totalFetched < totalDBRowCount
+                    ) {
+                        fetchNextPage();
+                    }
                 }
-            }
-        },
-        [fetchNextPage, isFetching, totalFetched, totalDBRowCount],
-    );
+            },
+            [fetchNextPage, isFetching, totalFetched, totalDBRowCount],
+        );
+
+        //a check on mount to see if the table is already scrolled to the bottom and immediately needs to fetch more data
+        useEffect(() => {
+            fetchMoreOnBottomReached(tableContainerRef.current);
+        }, [fetchMoreOnBottomReached]);
+    } else {
+        flatData = useMemo(() => {
+            if (!config.data) return [];
+            const tableData = config.data;
+            setFlatRowData(tableData);
+            isLoading = false;
+            isFetching = false;
+            return tableData;
+        }, [config.data]);
+
+        columns = useMemo(() => {
+            if (!config.data) return [];
+            const firstRow = (config.data[0]);
+            return InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
+        }, [config.data]);
+    }
+
+
+
+
+
+
+
 
     //scroll to top of table when sorting or filters change
     useEffect(() => {
@@ -118,10 +160,7 @@ const InfiniteScroll = ({ config }: any) => {
         }
     }, [sorting, columnFilters, globalFilter]);
 
-    //a check on mount to see if the table is already scrolled to the bottom and immediately needs to fetch more data
-    useEffect(() => {
-        fetchMoreOnBottomReached(tableContainerRef.current);
-    }, [fetchMoreOnBottomReached]);
+
 
     if (isLoading) return <div><CircularProgress /> <h3>  Loading...</h3></div>;
     return (
