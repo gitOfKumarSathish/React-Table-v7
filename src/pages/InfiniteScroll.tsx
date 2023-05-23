@@ -23,6 +23,7 @@ import { InfintieColumns } from '../components/Table/InfintieColumns';
 import { APIDataFetching } from '../components/Table/InfiniteAPI';
 import ColumnStore from '../components/Table/ColumnStore';
 import useGlobalConfig from '../components/Table/useGlobalConfig';
+import LocalDataTable from './LocalDataTable';
 
 const InfiniteScroll = ({ config }: any) => {
     const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
@@ -38,9 +39,12 @@ const InfiniteScroll = ({ config }: any) => {
 
     const columnConfigurations = config.columnConfig;
 
-    const { fetchSize, endPoint, } = config.apiHandler || {};
-    const endPointConverter = endPoint.split('/');
-    const dataKey = endPointConverter[endPointConverter.length - 1];
+    // if Config doesn't contain apiHandler then Local TableComponent will called
+    if (!config.apiHandler) return <LocalDataTable config={config} />;
+
+    const { fetchSize, endPoint } = config.apiHandler || {};
+    const endPointConverter = endPoint?.split('/') || [];
+    const dataKey = endPointConverter[endPointConverter.length - 1] || config.dataKey;
     const globalConfig = useGlobalConfig(config.globalConfig);
     const {
         enablePinning,
@@ -124,6 +128,7 @@ const InfiniteScroll = ({ config }: any) => {
     }, [fetchMoreOnBottomReached]);
 
     if (isLoading) return <div><CircularProgress /> <h3>  Loading...</h3></div>;
+
     return (
         <>
             <section> {!isLoading &&
@@ -209,7 +214,7 @@ const InfiniteScroll = ({ config }: any) => {
                         globalFilter,
                         isLoading,
                         showAlertBanner: isError,
-                        showProgressBars: isFetching,
+                        // showProgressBars: isFetching,
                         sorting,
                         density: 'compact',
                         rowSelection

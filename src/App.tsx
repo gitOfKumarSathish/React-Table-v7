@@ -10,7 +10,7 @@ const configuration = {
   apiHandler: {
     endPoint: 'https://dummyjson.com/users', // API endpoint
     fetchSize: 25, // Fetch Data count
-    dataKey: 'users' // Mandatory Unique identifier key for the api response to get data, Based on the Key we get value, Also to store column in local storage.
+    // dataKey: 'users' // Mandatory Unique identifier key for the api response to get data, Based on the Key we get value, Also to store column in local storage.
   },
   globalConfig: {
     enablePinning: false,
@@ -224,13 +224,74 @@ const configuration3 = {
 
 };
 
+const configuration4 = {
+  data: APIresponse.data, // Local Data for the Table
+  dataKey: "localResponse", // To Store in LocalStorage
+  globalConfig: {
+    // enablePinning: false,
+    // enableRowSelection: false,
+    // enableMultiRowSelection: false,
+    // enableRowOrdering: false,
+    // enableColumnOrdering: false,
+    // enableRowNumbers: false, // turn on row numbers # of rows
+    // enableHiding: false, // Hiding Columns Property
+    // enableStickyHeader: false, // Sticky Header Property
+    // enableExpandAll: false, // Expand All Property
+    // enableColumnResizing: false, // Column Resizing Property
+    // enableFilterMatchHighlighting: false,
+    // enablePagination: false, // Pagination Property,
+    // // enableColumnFilters: false, // Column Filters Property
+    // enableSorting: false, // Sorting Property
+    // enableGlobalFilter: false, // Global Filter Property,
+    // enableGlobalFilterModes: false, // Global Filter Mode Property
+    // globalFilterFn: 'contains', // Global Filter
+    // filterFn: 'startsWith', // Individual Column Filter
+    // enableDensityToggle: false, // Enable density toggle padding property
+    // enableFullScreenToggle: false, // Enable full screen toggle property
+    // enableRowVirtualization: true, // Enable row virtualization,
+    hideColumnsDefault: ["about"] // Hide columns default
+  },
+  rowExpandedDetails: ({ row }: any) => {
+    const { about } = row.original;
+    console.log('row', row.original);
+    return <p>{about}</p>;
+  },
+  columnConfig: [
+    {
+      header: 'picture',
+      enableColumnFilter: false,
+      enableSorting: false,
+      filterFn: 'contains',
+      Cell: ({ cell }: { cell: any; }) => <img src={cell.getValue()} width={30} />
+    },
+    {
+      header: 'eyeColor',
+      enableColumnFilter: false,
+      enableSorting: false,
+      Cell: ({ cell }: { cell: any; }) => (
+        <p
+          style={{
+            backgroundColor: cell.getValue(),
+          }}
+          className='colorBox'
+        >
+          &nbsp;
+        </p>)
+    }
+
+
+  ]
+
+};
+
 function App() {
 
   return (
     <>
       <InfiniteScroll config={configuration} />
       <InfiniteScroll config={configuration2} />
-      <LocalDataTable config={configuration3} />
+      <InfiniteScroll config={configuration3} />
+      <InfiniteScroll config={configuration4} />
     </>
   );
 }
