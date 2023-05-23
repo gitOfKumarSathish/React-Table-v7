@@ -80,7 +80,9 @@ const InfiniteScroll = ({ config }: any) => {
 
     // Preparing Table Data
     flatData = useMemo(() => {
-        if (config.apiHandler) {
+        console.log('config.apiHandler', config.apiHandler);
+        if (config.apiHandler && config.apiHandler.endPoint) {
+            console.log('dddddddddddddddddddddddd');
             if (!data) return [];
             const tableData = data.pages.flatMap((page: any) => page[dataKey]);
             setFlatRowData(tableData);
@@ -98,7 +100,7 @@ const InfiniteScroll = ({ config }: any) => {
 
     // Column headers creation
     columns = useMemo(() => {
-        if (config.apiHandler) {
+        if (config.apiHandler && config.apiHandler.endPoint) {
             if (!data) return [];
             const firstRow = (data?.pages[0]?.[dataKey]?.[0]);
             return InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
@@ -111,7 +113,7 @@ const InfiniteScroll = ({ config }: any) => {
     }, [data]);
 
 
-    const totalDBRowCount = data?.pages?.[0].total ?? 0;
+    const totalDBRowCount = (config.apiHandler && config.apiHandler.endPoint) ? data?.pages?.[0].total ?? 0 : flatRowData.length;
     const totalFetched = flatRowData.length;
 
     //called on scroll and possibly on mount to fetch more data as the user scrolls and reaches bottom of table

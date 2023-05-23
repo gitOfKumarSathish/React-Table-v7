@@ -8,8 +8,8 @@ import LocalDataTable from './pages/LocalDataTable';
 
 const configuration = {
   apiHandler: {
-    endPoint: 'https://dummyjson.com/users', // API endpoint
-    fetchSize: 25, // Fetch Data count
+    // endPoint: 'https://dummyjson.com/users', // API endpoint
+    // fetchSize: 25, // Fetch Data count
     // dataKey: 'users' // Mandatory Unique identifier key for the api response to get data, Based on the Key we get value, Also to store column in local storage.
   },
   globalConfig: {
