@@ -112,7 +112,6 @@ const configuration2 = {
 
   // rowExpandedDetails: ({ row }:any) => {
   //   const { description } = row.original;
-  //   console.log('row', row.original);
   //   return <p>{description}</p>;
   // },
   columnConfig: [
@@ -193,7 +192,6 @@ const configuration3 = {
   },
   rowExpandedDetails: ({ row }: any) => {
     const { about } = row.original;
-    console.log('row', row.original);
     return <p>{about}</p>;
   },
   columnConfig: [
@@ -253,7 +251,6 @@ const configuration4 = {
   },
   rowExpandedDetails: ({ row }: any) => {
     const { about } = row.original;
-    console.log('row', row.original);
     return <p>{about}</p>;
   },
   columnConfig: [

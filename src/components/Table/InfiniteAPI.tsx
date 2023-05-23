@@ -4,6 +4,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { UserApiResponse } from "../../assets/Interfaces";
 
 export function APIDataFetching(columnFilters: MRT_ColumnFiltersState, globalFilter: any, sorting: MRT_SortingState, fetchSize: number, endPoint: string, dataKey: String) {
+    if (!endPoint) return {};
     return useInfiniteQuery<UserApiResponse>({
         queryKey: [dataKey, columnFilters, globalFilter, sorting],
         queryFn: async ({ pageParam = 0 }) => {

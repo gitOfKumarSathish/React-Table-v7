@@ -24,7 +24,11 @@ import { APIDataFetching } from '../components/Table/InfiniteAPI';
 import ColumnStore from '../components/Table/ColumnStore';
 import useGlobalConfig from '../components/Table/useGlobalConfig';
 import LocalDataTable from './LocalDataTable';
+import { InfiniteData } from '@tanstack/react-query';
+import { UserApiResponse } from '../assets/Interfaces';
 
+let flatData: any;
+let columns: MRT_ColumnDef<any>[];
 const InfiniteScroll = ({ config }: any) => {
     const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState<string>();
@@ -40,7 +44,7 @@ const InfiniteScroll = ({ config }: any) => {
     const columnConfigurations = config.columnConfig;
 
     // if Config doesn't contain apiHandler then Local TableComponent will called
-    if (!config.apiHandler) return <LocalDataTable config={config} />;
+
 
     const { fetchSize, endPoint } = config.apiHandler || {};
     const endPointConverter = endPoint?.split('/') || [];
@@ -72,21 +76,38 @@ const InfiniteScroll = ({ config }: any) => {
     }: any = globalConfig;
 
     // Query Handling  
-    const { data, fetchNextPage, isError, isFetching, isLoading } = APIDataFetching(columnFilters, globalFilter, sorting, fetchSize, endPoint, dataKey);
+    let { data, fetchNextPage, isError, isFetching, isLoading }: any = APIDataFetching(columnFilters, globalFilter, sorting, fetchSize, endPoint, dataKey);
 
     // Preparing Table Data
-    let flatData = useMemo(() => {
-        if (!data) return [];
-        const tableData = data.pages.flatMap((page: any) => page[dataKey]);
-        setFlatRowData(tableData);
-        return tableData;
+    flatData = useMemo(() => {
+        if (config.apiHandler) {
+            if (!data) return [];
+            const tableData = data.pages.flatMap((page: any) => page[dataKey]);
+            setFlatRowData(tableData);
+            return tableData;
+        } else {
+            data = config.data;
+            if (!data) return [];
+            const tableData = data;
+            setFlatRowData(tableData);
+            isError = false;
+            isLoading = false;
+            return tableData;
+        }
     }, [data]);
 
     // Column headers creation
-    const columns: MRT_ColumnDef<any>[] = useMemo(() => {
-        if (!data) return [];
-        const firstRow = (data?.pages[0]?.[dataKey]?.[0]);
-        return InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
+    columns = useMemo(() => {
+        if (config.apiHandler) {
+            if (!data) return [];
+            const firstRow = (data?.pages[0]?.[dataKey]?.[0]);
+            return InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
+        } else {
+            data = config.data;
+            if (!data) return [];
+            const firstRow = (data[0]);
+            return InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
+        }
     }, [data]);
 
 
@@ -181,7 +202,7 @@ const InfiniteScroll = ({ config }: any) => {
                     }}
 
                     muiToolbarAlertBannerProps={ // Error Handling for Data
-                        isError
+                        (isError && config.apiHandler)
                             ? {
                                 color: 'error',
                                 children: 'Error loading data',
@@ -213,8 +234,8 @@ const InfiniteScroll = ({ config }: any) => {
                         columnFilters,
                         globalFilter,
                         isLoading,
-                        showAlertBanner: isError,
-                        // showProgressBars: isFetching,
+                        showAlertBanner: isError && config.apiHandler,
+                        showProgressBars: isFetching,
                         sorting,
                         density: 'compact',
                         rowSelection
