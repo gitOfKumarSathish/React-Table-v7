@@ -23,9 +23,6 @@ import { InfintieColumns } from '../components/Table/InfintieColumns';
 import { APIDataFetching } from '../components/Table/InfiniteAPI';
 import ColumnStore from '../components/Table/ColumnStore';
 import useGlobalConfig from '../components/Table/useGlobalConfig';
-import LocalDataTable from './LocalDataTable';
-import { InfiniteData } from '@tanstack/react-query';
-import { UserApiResponse } from '../assets/Interfaces';
 
 let flatData: any;
 let columns: MRT_ColumnDef<any>[];
@@ -42,10 +39,6 @@ const InfiniteScroll = ({ config }: any) => {
     const rowVirtualizerInstanceRef = useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null); //we can get access to the underlying Virtualizer instance and call its scrollToIndex method
 
     const columnConfigurations = config.columnConfig;
-
-    // if Config doesn't contain apiHandler then Local TableComponent will called
-
-
     const { fetchSize, endPoint } = config.apiHandler || {};
     const endPointConverter = endPoint?.split('/') || [];
     const dataKey = endPointConverter[endPointConverter.length - 1] || config.dataKey;
@@ -80,36 +73,33 @@ const InfiniteScroll = ({ config }: any) => {
 
     // Preparing Table Data
     flatData = useMemo(() => {
-        console.log('config.apiHandler', config.apiHandler);
+        let tableData;
         if (config.apiHandler && config.apiHandler.endPoint) {
-            console.log('dddddddddddddddddddddddd');
             if (!data) return [];
-            const tableData = data.pages.flatMap((page: any) => page[dataKey]);
-            setFlatRowData(tableData);
-            return tableData;
+            tableData = data.pages.flatMap((page: any) => page[dataKey]);
         } else {
             data = config.data;
             if (!data) return [];
-            const tableData = data;
-            setFlatRowData(tableData);
+            tableData = data;
             isError = false;
             isLoading = false;
-            return tableData;
         }
+        setFlatRowData(tableData);
+        return tableData;
     }, [data]);
 
     // Column headers creation
     columns = useMemo(() => {
+        let firstRow;
         if (config.apiHandler && config.apiHandler.endPoint) {
             if (!data) return [];
-            const firstRow = (data?.pages[0]?.[dataKey]?.[0]);
-            return InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
+            firstRow = data?.pages[0]?.[dataKey]?.[0];
         } else {
             data = config.data;
             if (!data) return [];
-            const firstRow = (data[0]);
-            return InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
+            firstRow = data[0];
         }
+        return InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
     }, [data]);
 
 
